@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoalArena.Models
+namespace Model
 {
     public class Team
     {
