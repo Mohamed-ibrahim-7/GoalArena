@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36327.8 d17.14
+VisualStudioVersion = 17.14.36327.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoalArena", "GoalArena\GoalArena.csproj", "{F4A4764D-A3FE-453C-8CFF-E67040D7E956}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{C674FAB2-6252-4BB5-B8B3-433E9BA43E3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{6E308C89-AB36-4327-A78C-C37C00756C21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{F4A4764D-A3FE-453C-8CFF-E67040D7E956}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4A4764D-A3FE-453C-8CFF-E67040D7E956}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4A4764D-A3FE-453C-8CFF-E67040D7E956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C674FAB2-6252-4BB5-B8B3-433E9BA43E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C674FAB2-6252-4BB5-B8B3-433E9BA43E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C674FAB2-6252-4BB5-B8B3-433E9BA43E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C674FAB2-6252-4BB5-B8B3-433E9BA43E3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E308C89-AB36-4327-A78C-C37C00756C21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E308C89-AB36-4327-A78C-C37C00756C21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E308C89-AB36-4327-A78C-C37C00756C21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E308C89-AB36-4327-A78C-C37C00756C21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

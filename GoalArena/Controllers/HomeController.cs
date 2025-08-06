@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Model;
+using GoalArena.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoalArena.Controllers
