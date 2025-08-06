@@ -17,6 +17,8 @@ namespace GoalArena.Models
         public Season Season { get; set; }
 
         public ICollection<Player> Players { get; set; }
+        public ICollection<News> News { get; set; }
+        public ICollection<TeamSeason> TeamSeasons { get; set; }
 
     }
 }

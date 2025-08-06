@@ -14,9 +14,8 @@
         public decimal Price { get; set; }
         public DateTime PurchaseDate { get; set; }
 
-    }
-}
-       public enum TicketStatus
+    } 
+    public enum TicketStatus
     {
     Available,
     Pending,
@@ -24,3 +23,5 @@
     Sold,
     Cancelled
      }
+}
+     
