@@ -16,13 +16,10 @@ namespace GoalArena.Models
         public int SeasonId { get; set; }
         public Season? Season { get; set; }
 
-<<<<<<< HEAD:GoalArena/Models/Team.cs
         public ICollection<Player> Players { get; set; }
         public ICollection<News> News { get; set; }
         public ICollection<TeamSeason> TeamSeasons { get; set; }
-=======
-        public ICollection<Player> Players { get; set; }  = null!;
->>>>>>> 3cd2569 (Creata DataBase And DataAccess,Models):Models/Team.cs
+
 
     }
 }
