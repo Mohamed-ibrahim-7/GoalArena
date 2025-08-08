@@ -1,4 +1,5 @@
-﻿using GoalArena.DataAccess;
+﻿using GoalArena.Data;
+
 using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
 
@@ -7,8 +8,8 @@ namespace GoalArena.Repositories
     public class MatcheventRepository : Repository<MatchEvent>, IMatchEventRepository
 
     {
-        private readonly  ApplicationDbcontext _dbcontext;
-        public MatcheventRepository(ApplicationDbcontext context) : base(context)
+        private readonly ApplicationDbContext _dbcontext;
+        public MatcheventRepository(ApplicationDbContext context) : base(context)
         {
             _dbcontext= context;
         }
