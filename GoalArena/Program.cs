@@ -1,5 +1,8 @@
 using GoalArena.Data;
 using GoalArena.Models;
+using GoalArena.Repositories;
+using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility.DBInitializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +25,26 @@ namespace GoalArena
                 options.Password.RequireNonAlphanumeric = false;
                 options.SignIn.RequireConfirmedEmail = true;
             })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+                  .AddEntityFrameworkStores<ApplicationDbContext>();
+            // 3. Configure authentication cookies
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
+
+            builder.Services.AddScoped<ImatchRepository, MatchRepository>();   
+            builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+            builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
+            builder.Services.AddScoped<iTeamRepository, TeamRepository>();
+            builder.Services.AddScoped<IDBInitializer, DBInitializer>();
+            builder.Services.AddScoped<IMatchEventRepository, MatcheventRepository >();
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+            builder.Services.AddScoped<ITournamentRepository, TournamentRepository >();
+            builder.Services.AddScoped<InewsRepository, NewsRepository>();
+
 
             var app = builder.Build();
 
