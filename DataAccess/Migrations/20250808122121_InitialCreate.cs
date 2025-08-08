@@ -228,10 +228,10 @@ namespace DataAccess.Migrations
                     AwayTeamId = table.Column<int>(type: "int", nullable: false),
                     MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Stadium = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MatchResult = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Result = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     SeasonId = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    TournamentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -287,6 +287,34 @@ namespace DataAccess.Migrations
                         principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeamSeasons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
+                    SeasonId = table.Column<int>(type: "int", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    Rank = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeamSeasons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TeamSeasons_Seasons_SeasonId",
+                        column: x => x.SeasonId,
+                        principalTable: "Seasons",
+                        principalColumn: "SeasonId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TeamSeasons_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -352,7 +380,8 @@ namespace DataAccess.Migrations
                     PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     playerId = table.Column<int>(type: "int", nullable: false),
                     TeamId = table.Column<int>(type: "int", nullable: false),
-                    MatchId = table.Column<int>(type: "int", nullable: false)
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    TeamId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -375,6 +404,11 @@ namespace DataAccess.Migrations
                         principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_News_Teams_TeamId1",
+                        column: x => x.TeamId1,
+                        principalTable: "Teams",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -462,6 +496,11 @@ namespace DataAccess.Migrations
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_News_TeamId1",
+                table: "News",
+                column: "TeamId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Players_TeamId",
                 table: "Players",
                 column: "TeamId");
@@ -475,6 +514,16 @@ namespace DataAccess.Migrations
                 name: "IX_Teams_SeasonId",
                 table: "Teams",
                 column: "SeasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeamSeasons_SeasonId",
+                table: "TeamSeasons",
+                column: "SeasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeamSeasons_TeamId",
+                table: "TeamSeasons",
+                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_MatchId",
@@ -505,6 +554,9 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "News");
+
+            migrationBuilder.DropTable(
+                name: "TeamSeasons");
 
             migrationBuilder.DropTable(
                 name: "Tickets");

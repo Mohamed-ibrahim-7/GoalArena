@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250806031042_InitialCreate")]
+    [Migration("20250808122121_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -118,9 +118,8 @@ namespace DataAccess.Migrations
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MatchResult")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Result")
+                        .HasColumnType("int");
 
                     b.Property<int>("SeasonId")
                         .HasColumnType("int");
@@ -199,6 +198,9 @@ namespace DataAccess.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -210,6 +212,8 @@ namespace DataAccess.Migrations
                     b.HasIndex("MatchId");
 
                     b.HasIndex("TeamId");
+
+                    b.HasIndex("TeamId1");
 
                     b.HasIndex("playerId");
 
@@ -316,6 +320,35 @@ namespace DataAccess.Migrations
                     b.HasIndex("SeasonId");
 
                     b.ToTable("Teams");
+                });
+
+            modelBuilder.Entity("GoalArena.Models.TeamSeason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeasonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeasonId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("TeamSeasons");
                 });
 
             modelBuilder.Entity("GoalArena.Models.Ticket", b =>
@@ -578,6 +611,10 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("GoalArena.Models.Team", null)
+                        .WithMany("News")
+                        .HasForeignKey("TeamId1");
+
                     b.HasOne("GoalArena.Models.Player", "Player")
                         .WithMany()
                         .HasForeignKey("playerId")
@@ -624,10 +661,29 @@ namespace DataAccess.Migrations
                     b.Navigation("Season");
                 });
 
+            modelBuilder.Entity("GoalArena.Models.TeamSeason", b =>
+                {
+                    b.HasOne("GoalArena.Models.Season", "Season")
+                        .WithMany()
+                        .HasForeignKey("SeasonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GoalArena.Models.Team", "Team")
+                        .WithMany("TeamSeasons")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Season");
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("GoalArena.Models.Ticket", b =>
                 {
                     b.HasOne("GoalArena.Models.Match", "Match")
-                        .WithMany("tickets")
+                        .WithMany("Tickets")
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -692,7 +748,7 @@ namespace DataAccess.Migrations
 
                     b.Navigation("News");
 
-                    b.Navigation("tickets");
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("GoalArena.Models.Season", b =>
@@ -704,7 +760,11 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("GoalArena.Models.Team", b =>
                 {
+                    b.Navigation("News");
+
                     b.Navigation("Players");
+
+                    b.Navigation("TeamSeasons");
                 });
 
             modelBuilder.Entity("GoalArena.Models.Tournament", b =>
