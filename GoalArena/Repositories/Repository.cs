@@ -1,4 +1,5 @@
-﻿using GoalArena.DataAccess;
+﻿using GoalArena.Data;
+
 using GoalArena.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace GoalArena.Repositories
     public class Repository<T> : IRepositories<T> where T : class
     {
         private readonly DbSet<T> _db;
-        private readonly ApplicationDbcontext _context;
+        private readonly ApplicationDbContext _context;
 
-        public Repository(ApplicationDbcontext context)
+        public Repository(ApplicationDbContext context)
         {
             _context = context;
             _db = _context.Set<T>();
