@@ -1,4 +1,6 @@
-﻿namespace GoalArena.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GoalArena.Models
 {
     public class Ticket
     {
@@ -9,8 +11,8 @@
 
         public string UserId { get; set; }    = null!;
         public string SeatNumber { get; set; }     = null!;
-        public string TicketStatus { get; set; } = null!; 
-
+        public string TicketStatus { get; set; } = null!;
+        [Range(0, 1_000_000)]
         public decimal Price { get; set; }
         public DateTime PurchaseDate { get; set; }
 
