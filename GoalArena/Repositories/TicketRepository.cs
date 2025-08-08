@@ -1,4 +1,5 @@
-﻿using GoalArena.DataAccess;
+﻿using GoalArena.Data;
+
 using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
 
@@ -6,8 +7,8 @@ namespace GoalArena.Repositories
 {
     public class TicketRepository : Repository<Ticket>, ITicketRepository
     {
-        private readonly ApplicationDbcontext _dbcontext;
-        public TicketRepository(ApplicationDbcontext context) : base(context)
+        private readonly ApplicationDbContext _dbcontext;
+        public TicketRepository(ApplicationDbContext context) : base(context)
         {
             _dbcontext = context;
         }
