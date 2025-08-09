@@ -42,7 +42,7 @@ namespace GoalArena
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
             builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
-            builder.Services.AddScoped<iTeamRepository, TeamRepository>();
+            builder.Services.AddScoped<ITeamRepository, TeamRepository>();
             builder.Services.AddScoped<IDBInitializer, DBInitializer>();
             builder.Services.AddScoped<IMatchEventRepository, MatcheventRepository >();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();

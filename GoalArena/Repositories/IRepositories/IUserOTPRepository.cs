@@ -5,7 +5,7 @@ using GoalArena.Models;
 
 namespace GoalArena.Repositories.IRepositories
 {
-    public interface IUserOTPRepository : IRepository<UserOTP>
+    public interface IUserOTPRepository : IRepositories<UserOTP>
     {
     }
 }

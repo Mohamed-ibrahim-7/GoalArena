@@ -2,7 +2,7 @@
 
 namespace GoalArena.Repositories.IRepositories
 {
-    public interface iTeamRepository: IRepositories<Team>
+    public interface ITeamRepository: IRepositories<Team>
     {
 
     }

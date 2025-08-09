@@ -5,7 +5,7 @@ using GoalArena.Repositories.IRepositories;
 
 namespace GoalArena.Repositories
 {
-    public class TeamRepository : Repository<Team>, iTeamRepository
+    public class TeamRepository : Repository<Team>, ITeamRepository
     {
         private readonly ApplicationDbContext _dbcontext;
         public TeamRepository(ApplicationDbContext context) : base(context)
