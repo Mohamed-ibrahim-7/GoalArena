@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GoalArena.Controllers
+namespace GoalArena.Areas.Admin.Controllers
 {
-    public class HomeController : Controller
+    [Area("Admin")]
+    public class AdminController : Controller
     {
-        
         public IActionResult Index()
         {
             return View();

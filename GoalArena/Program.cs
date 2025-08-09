@@ -1,5 +1,7 @@
 using GoalArena.Data;
 using GoalArena.Models;
+using GoalArena.Repositories.IRepositories;
+using GoalArena.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +26,14 @@ namespace GoalArena
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
+            builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
+            builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+
+
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -42,7 +52,7 @@ namespace GoalArena
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{area=Admin}/{controller=Admin}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

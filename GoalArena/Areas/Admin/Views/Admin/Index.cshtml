@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2>Admin Dashboard</h2>
+<p>
+    Welcome to the admin dashboard. Use the navigation to manage tournaments, teams, players, matches, etc.
+</p>
+<a asp-area="Admin" asp-controller="Tournaments" asp-action="Index" class="btn btn-primary">
+    Manage Tournaments
+</a>
+<a asp-area="Admin" asp-controller="Teams" asp-action="Index" class="btn btn-primary">
+    Manage Teams
+</a>
+<a asp-area="Admin" asp-controller="Seasons" asp-action="Index" class="btn btn-primary">
+    Manage Seasons
+</a>
+
