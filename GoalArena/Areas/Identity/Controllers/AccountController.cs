@@ -1,4 +1,4 @@
-﻿ using GoalArena.Models;
+﻿using GoalArena.Models;
 using GoalArena.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
