@@ -2,8 +2,10 @@ using GoalArena.Data;
 using GoalArena.Models;
 using GoalArena.Repositories;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
 using GoalArena.Utility.DBInitializer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalArena
@@ -33,22 +35,24 @@ namespace GoalArena
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 
             builder.Services.AddScoped<ImatchRepository, MatchRepository>();   
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
+            builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
             builder.Services.AddScoped<iTeamRepository, TeamRepository>();
             builder.Services.AddScoped<IDBInitializer, DBInitializer>();
             builder.Services.AddScoped<IMatchEventRepository, MatcheventRepository >();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository >();
             builder.Services.AddScoped<InewsRepository, NewsRepository>();
-
+           // StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipelinez      ccccccccv bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -57,16 +61,23 @@ namespace GoalArena
             }
 
             app.UseHttpsRedirection();
+
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+                dbInitializer.Initialize();
+            }
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
-             name: "areas",
-             pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
-
-                .WithStaticAssets();
+                 name: "default",
+                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
+                 .WithStaticAssets();
 
             app.Run();
 
