@@ -9,3 +9,4 @@ namespace GoalArena.Repositories.IRepositories
     {
     }
 }
+ 
