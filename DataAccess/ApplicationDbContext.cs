@@ -21,6 +21,8 @@ namespace GoalArena.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
+        public DbSet<UserOTP> UserOTPs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

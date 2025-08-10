@@ -12,11 +12,11 @@ namespace GoalArena.Utility
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("", "osrm qmcu svcw eyrp")
+                Credentials = new NetworkCredential("hosny9938@gmail.com", "tmwd mdmm ufdq cihl")
             };
 
             return client.SendMailAsync(
-                new MailMessage(from: "",
+                new MailMessage(from: "hosny9938@gmail.com",
                                 to: email,
                                 subject,
                                 message

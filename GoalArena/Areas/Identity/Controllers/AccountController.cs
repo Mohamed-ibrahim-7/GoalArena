@@ -1,14 +1,11 @@
 ﻿using GoalArena.Models;
-using GoalArena.Repositories;
 using GoalArena.Repositories.IRepositories;
 using GoalArena.Utility;
 using GoalArena.ViewModels;
-using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoalArena.Areas.Identity.Controllers
 {
@@ -36,7 +33,7 @@ namespace GoalArena.Areas.Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(registerVM);
             }
@@ -54,7 +51,7 @@ namespace GoalArena.Areas.Identity.Controllers
 
             var result = await _userManager.CreateAsync(applicationUser, registerVM.Password);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 // Send Email
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
@@ -81,14 +78,14 @@ namespace GoalArena.Areas.Identity.Controllers
         {
             var user = await _userManager.FindByIdAsync(userId);
 
-            if(user is not null)
+            if (user is not null)
             {
                 var result = await _userManager.ConfirmEmailAsync(user, token);
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                     return View();
 
-                TempData["error-notification"] = String.Join(", ", result.Errors.Select(e=>e.Description));
+                TempData["error-notification"] = String.Join(", ", result.Errors.Select(e => e.Description));
                 return RedirectToAction(nameof(Index), controllerName: "Home", new { area = "Customer" });
             }
 
@@ -110,7 +107,7 @@ namespace GoalArena.Areas.Identity.Controllers
 
             var user = await _userManager.FindByEmailAsync(loginVM.EmailORUserName) ?? await _userManager.FindByNameAsync(loginVM.EmailORUserName);
 
-            if(user is not null)
+            if (user is not null)
             {
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: true);
 
@@ -148,25 +145,37 @@ namespace GoalArena.Areas.Identity.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM)
         {
             if (!ModelState.IsValid)
-            {
                 return View(resendEmailConfirmationVM);
+
+            ApplicationUser user = null;
+
+            // Check if input is email or username
+            if (resendEmailConfirmationVM.EmailORUserName.Contains("@"))
+            {
+                // Avoid "Sequence contains more than one element"
+                user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.Email == resendEmailConfirmationVM.EmailORUserName);
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailORUserName);
             }
 
-            var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.EmailORUserName) ?? await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailORUserName);
-
-            if(user is not null)
+            if (user != null)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = "Identity", token = token, userId = user.Id }, Request.Scheme);
-                await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Account", $"<h1>Confirm Your Account By Clicking <a href='{link}'>Here</a></h1>");
+                var link = Url.Action(nameof(ConfirmEmail), "Account",
+                    new { area = "Identity", token = token, userId = user.Id },
+                    Request.Scheme);
+
+                await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Account",
+                    $"<h1>Confirm Your Account By Clicking <a href='{link}'>Here</a></h1>");
             }
 
-            // Send msg
             TempData["success-notification"] = "Confirm Your Account Again!";
             return RedirectToAction(nameof(Index), "Home", new { area = "Customer" });
         }
@@ -175,7 +184,6 @@ namespace GoalArena.Areas.Identity.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> ForgetPassword(ForgetPasswordVM forgetPasswordVM)
         {
@@ -183,43 +191,56 @@ namespace GoalArena.Areas.Identity.Controllers
             {
                 return View(forgetPasswordVM);
             }
-            var user = await _userManager.FindByEmailAsync(forgetPasswordVM.EmailORUserName) ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailORUserName);
+
+            var user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Email == forgetPasswordVM.EmailORUserName)
+                ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailORUserName);
+
+            if (user == null)
+            {
+                TempData["error-notification"] = "User not found";
+                return View(forgetPasswordVM);
+            }
 
             var userOTP = await _userOTPRepository.GetAsync(e => e.ApplicationUserId == user.Id);
 
-            var totalOTPs = userOTP.Count(e => (e.Date.Day == DateTime.UtcNow.Day) && (e.Date.Month == DateTime.UtcNow.Month) && (e.Date.Year == DateTime.UtcNow.Year));
+            var totalOTPs = userOTP.Count(e =>
+                e.Date.Day == DateTime.UtcNow.Day &&
+                e.Date.Month == DateTime.UtcNow.Month &&
+                e.Date.Year == DateTime.UtcNow.Year);
 
             if (totalOTPs < 3)
             {
-                if (user is not null)
-                {
-                    var OTPNumber = new Random().Next(1000, 9999);
-                    await _emailSender.SendEmailAsync(user.Email!, "Reset Password", $"<h1>Reset Password Using OTP Number {OTPNumber}</h1>");
+                var OTPNumber = new Random().Next(1000, 9999);
 
-                    await _userOTPRepository.CreateAsync(new()
-                    {
-                        Code = OTPNumber.ToString(),
-                        Date = DateTime.UtcNow,
-                        ExpirationDate = DateTime.UtcNow.AddHours(1),
-                        ApplicationUserId = user.Id
-                    });
-                    await _userOTPRepository.CommitAsync();
-                }
+                await _emailSender.SendEmailAsync(
+                    user.Email!,
+                    "Reset Password",
+                    $"<h1>Reset Password Using OTP Number {OTPNumber}</h1>"
+                );
+
+                await _userOTPRepository.CreateAsync(new()
+                {
+                    Code = OTPNumber.ToString(),
+                    Date = DateTime.UtcNow,
+                    ExpirationDate = DateTime.UtcNow.AddHours(1),
+                    ApplicationUserId = user.Id
+                });
+                await _userOTPRepository.CommitAsync();
 
                 TempData["RedirectToAction"] = Guid.NewGuid().ToString();
-                return RedirectToAction(nameof(ResetPassword), new { userId = user.Id! });
+                return RedirectToAction(nameof(ResetPassword), new { userId = user.Id });
             }
 
-            // Send msg
-            TempData["error-notification"] = "Too Many Request, Please try again Later";
+            TempData["error-notification"] = "Too Many Requests, Please try again later";
             return View(forgetPasswordVM);
         }
 
         public IActionResult ResetPassword(string userId)
         {
-            if(TempData["RedirectToAction"] is not null)
+            if (TempData["RedirectToAction"] is not null)
             {
-                if(userId is not null)
+                if (userId is not null)
                 {
                     return View(new ResetPasswordVM()
                     {
@@ -235,9 +256,9 @@ namespace GoalArena.Areas.Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM)
         {
-            var userOTP = (await _userOTPRepository.GetAsync(e => e.ApplicationUserId == resetPasswordVM.UserId)).OrderBy(e=>e.Id).LastOrDefault();
+            var userOTP = (await _userOTPRepository.GetAsync(e => e.ApplicationUserId == resetPasswordVM.UserId)).OrderBy(e => e.Id).LastOrDefault();
 
-            if(userOTP is not null)
+            if (userOTP is not null)
             {
                 if (DateTime.UtcNow < userOTP.ExpirationDate && !userOTP.Status && userOTP.Code == resetPasswordVM.Code)
                 {
@@ -253,7 +274,7 @@ namespace GoalArena.Areas.Identity.Controllers
 
         public IActionResult ChangePassword(string userId)
         {
-            if(TempData["RedirectToAction"] is not null)
+            if (TempData["RedirectToAction"] is not null)
             {
                 return View(new ChangePasswordVM()
                 {

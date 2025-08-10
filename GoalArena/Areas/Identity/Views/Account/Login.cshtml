@@ -4,48 +4,57 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="container">
-    <h1>Login</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-center bg-primary text-white rounded-top-4">
+                    <h3 class="mb-0">Welcome Back</h3>
+                    <small>Please sign in to your account</small>
+                </div>
+                <div class="card-body p-4" style="background-color: #f9f9f9;">
+                    <form asp-action="Login">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <h4>LoginVM</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-12">
-            <form asp-action="Login">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="EmailORUserName" class="control-label"></label>
-                    <input asp-for="EmailORUserName" class="form-control" />
-                    <span asp-validation-for="EmailORUserName" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="EmailORUserName" class="form-label fw-semibold"></label>
+                            <input asp-for="EmailORUserName" class="form-control rounded-pill" placeholder="Enter your email or username" />
+                            <span asp-validation-for="EmailORUserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold"></label>
+                            <input asp-for="Password" type="password" class="form-control rounded-pill" placeholder="Enter your password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="RememberMe" />
+                            <label class="form-check-label" for="RememberMe">
+                                @Html.DisplayNameFor(model => model.RememberMe)
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2">Login</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <a asp-action="ResendEmailConfirmation" class="text-decoration-none text-secondary d-block mb-2">Resend Email Confirmation</a>
+                        <a asp-action="ForgetPassword" class="text-decoration-none text-secondary d-block">Forgot Password?</a>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="card-footer text-center" style="background-color: #f1f1f1;">
+                    <small>Don't have an account? <a asp-action="Register" class="text-primary fw-bold">Register here</a></small>
                 </div>
-                <div class="form-group form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
-                    </label>
-                </div>
-                <div class="form-group mt-3">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
-    <div>
-        <a asp-action="ResendEmailConfirmation">Resend Email Confirmation</a>
-    </div>
-    <div>
-        <a asp-action="ForgetPassword">Forget Password</a>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

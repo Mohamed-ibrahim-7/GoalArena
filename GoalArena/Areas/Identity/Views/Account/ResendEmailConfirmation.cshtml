@@ -1,35 +1,43 @@
 ﻿@model GoalArena.ViewModels.ResendEmailConfirmationVM
 
 @{
-    ViewData["Title"] = "ResendEmailConfirmation";
+    ViewData["Title"] = "Resend Email Confirmation";
 }
 
-<div class="container">
-    <h1>ResendEmailConfirmation</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="text-center fw-bold mb-4">Resend Email Confirmation</h3>
 
-    <h4>ResendEmailConfirmationVM</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-12">
-            <form asp-action="ResendEmailConfirmation">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="EmailORUserName" class="control-label"></label>
-                    <input asp-for="EmailORUserName" class="form-control" />
-                    <span asp-validation-for="EmailORUserName" class="text-danger"></span>
+                    <form asp-action="ResendEmailConfirmation">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="EmailORUserName" class="form-label"></label>
+                            <input asp-for="EmailORUserName" class="form-control" placeholder="Enter your email or username" />
+                            <span asp-validation-for="EmailORUserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                                Resend Confirmation
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a asp-action="Index" class="text-decoration-none">Back to List</a>
+                    </div>
                 </div>
-                <div class="form-group mt-3">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

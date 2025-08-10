@@ -7,6 +7,7 @@ using GoalArena.Utility.DBInitializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace GoalArena
 {
@@ -28,7 +29,7 @@ namespace GoalArena
                 options.SignIn.RequireConfirmedEmail = true;
             })
 
-                  .AddEntityFrameworkStores<ApplicationDbContext>();
+                  .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             // 3. Configure authentication cookies
             builder.Services.ConfigureApplicationCookie(options =>
             {
@@ -48,7 +49,8 @@ namespace GoalArena
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<ITournamentRepository, TournamentRepository >();
             builder.Services.AddScoped<InewsRepository, NewsRepository>();
-           // StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
