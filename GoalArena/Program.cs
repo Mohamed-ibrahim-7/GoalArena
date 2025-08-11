@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using System.Configuration;
 
 namespace GoalArena
 {
@@ -30,6 +31,22 @@ namespace GoalArena
             })
 
                   .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            // login by Google
+            builder.Services.AddAuthentication().AddGoogle("google", opt =>
+            {
+                var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+                opt.ClientId = googleAuth["ClientId"];
+                opt.ClientSecret = googleAuth["ClientSecret"];
+                opt.SignInScheme = IdentityConstants.ExternalScheme;
+
+                // ????? ????? ?????? ?????? ??????
+                opt.Events.OnRedirectToAuthorizationEndpoint = context =>
+                {
+                    context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
+                    return Task.CompletedTask;
+                };
+            });
+
             // 3. Configure authentication cookies
             builder.Services.ConfigureApplicationCookie(options =>
             {
