@@ -35,8 +35,8 @@ namespace GoalArena
             builder.Services.AddAuthentication().AddGoogle("google", opt =>
             {
                 var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-                opt.ClientId = googleAuth["ClientId"];
-                opt.ClientSecret = googleAuth["ClientSecret"];
+                opt.ClientId = googleAuth["ClientId"] ?? " ";
+                opt.ClientSecret = googleAuth["ClientSecret"] ?? " ";
                 opt.SignInScheme = IdentityConstants.ExternalScheme;
 
                 // ????? ????? ?????? ?????? ??????
@@ -45,6 +45,12 @@ namespace GoalArena
                     context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
                     return Task.CompletedTask;
                 };
+            });
+            // login by Facebook
+            builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"] ?? " ";
+                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]?? " ";
             });
 
             // 3. Configure authentication cookies

@@ -317,7 +317,6 @@ namespace GoalArena.Areas.Identity.Controllers
             return Challenge(properties, provider);
         }
         [HttpGet]
-        [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
             if (remoteError != null)
