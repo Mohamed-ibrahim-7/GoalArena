@@ -49,8 +49,9 @@ namespace GoalArena
             // login by Facebook
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
-                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"] ?? " ";
-                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"]?? " ";
+                facebookOptions.AppId = builder.Configuration["FaceBook:AppId"?? string.Empty];
+                facebookOptions.AppSecret = builder.Configuration["FaceBook:AppSecret"?? string.Empty];
+
             });
 
             // 3. Configure authentication cookies
@@ -95,7 +96,7 @@ namespace GoalArena
             }
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
