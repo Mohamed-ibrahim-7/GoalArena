@@ -51,6 +51,8 @@ namespace GoalArena
             {
                 facebookOptions.AppId = builder.Configuration["FaceBook:AppId"?? string.Empty];
                 facebookOptions.AppSecret = builder.Configuration["FaceBook:AppSecret"?? string.Empty];
+                facebookOptions.CallbackPath = "/signin-facebook";
+                facebookOptions.SignInScheme = IdentityConstants.ExternalScheme;
 
             });
 
