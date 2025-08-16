@@ -1,1 +1,244 @@
-﻿<h1>hiiiiiii</h1>
+﻿@using GoalArena.Models
+@{
+    ViewData["Title"] = "الصفحة الرئيسية - Goal Arena";
+    var matches = ViewBag.Matches as List<Match>;
+    var news = ViewBag.News as List<News>;
+    var currentFilter = ViewBag.CurrentFilter as string ?? "today";
+    var filterDate = ViewBag.FilterDate as DateTime? ?? DateTime.Today;
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4 text-primary">⚽ Goal Arena</h1>
+            <p class="lead">منصة المباريات والأخبار الرياضية</p>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Date Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Index", new { dateFilter = "yesterday" })"
+                               class="btn @(currentFilter == "yesterday" ? "btn-primary" : "btn-outline-primary")">
+                                <i class="fas fa-chevron-left"></i> أمس
+                                <small class="d-block">@DateTime.Today.AddDays(-1).ToString("dd/MM")</small>
+                            </a>
+                            <a href="@Url.Action("Index", new { dateFilter = "today" })"
+                               class="btn @(currentFilter == "today" ? "btn-primary" : "btn-outline-primary")">
+                                <i class="fas fa-calendar-day"></i> اليوم
+                                <small class="d-block">@DateTime.Today.ToString("dd/MM")</small>
+                            </a>
+                            <a href="@Url.Action("Index", new { dateFilter = "tomorrow" })"
+                               class="btn @(currentFilter == "tomorrow" ? "btn-primary" : "btn-outline-primary")">
+                                غداً <i class="fas fa-chevron-right"></i>
+                                <small class="d-block">@DateTime.Today.AddDays(1).ToString("dd/MM")</small>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <h5 class="text-muted">مباريات @GetDateDisplayName(currentFilter) - @filterDate.ToString("dd MMMM yyyy")</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Matches Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-futbol"></i> المباريات
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (matches != null && matches.Any())
+                    {
+                        <div class="row">
+                            @foreach (var match in matches)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100 border-start border-primary border-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div class="text-center flex-fill">
+                                                    <h6 class="fw-bold">@match.HomeTeam</h6>
+                                                    <div class="team-logo">🏟️</div>
+                                                </div>
+                                                <div class="text-center mx-3">
+                                                    <div class="badge bg-secondary fs-6">VS</div>
+                                                    <div class="small text-muted">@match.MatchDate.ToString("HH:mm")</div>
+                                                </div>
+                                                <div class="text-center flex-fill">
+                                                    <h6 class="fw-bold">@match.AwayTeam</h6>
+                                                    <div class="team-logo">🏟️</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="text-center mb-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt"></i> @match.Stadium
+                                                </small>
+                                            </div>
+
+                                            <!-- Player Prediction -->
+                                            <div class="mb-3">
+                                                <form asp-action="PredictBestPlayer" method="post" class="d-flex gap-2">
+                                                    <input type="hidden" name="matchId" value="@match.MatchId" />
+                                                    <input type="text" name="playerName" class="form-control form-control-sm"
+                                                           placeholder="توقع أفضل لاعب" required />
+                                                    <button type="submit" class="btn btn-outline-success btn-sm">
+                                                        <i class="fas fa-star"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <!-- Action Buttons -->
+                                            <div class="d-flex gap-2">
+                                                <a href="@Url.Action("BookTicket", new { matchId = match.MatchId })"
+                                                   class="btn btn-primary btn-sm flex-fill">
+                                                    <i class="fas fa-ticket-alt"></i> حجز تذكرة
+                                                </a>
+                                                <button class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip"
+                                                        title="مشاهدة تفاصيل المباراة">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">لا توجد مباريات في @GetDateDisplayName(currentFilter)</h5>
+                            <p class="text-muted">جرب تاريخاً آخر لمشاهدة المباريات</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- News & Sidebar -->
+        <div class="col-lg-4">
+            <!-- Latest News -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-newspaper"></i> آخر الأخبار
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (news != null && news.Any())
+                    {
+                        @foreach (var article in news)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <h6 class="fw-bold">@article.Title</h6>
+                                <p class="small text-muted mb-2">@article.Content?.Substring(0, Math.Min(article.Content.Length, 100))...</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> @article.Id <!-- يمكن استبدال هذا بتاريخ النشر -->
+                                </small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد أخبار متاحة حالياً</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar"></i> إحصائيات سريعة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>مباريات اليوم:</span>
+                        <badge class="badge bg-primary">@(matches?.Count ?? 0)</badge>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>آخر الأخبار:</span>
+                        <badge class="badge bg-success">@(news?.Count ?? 0)</badge>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>التحديث:</span>
+                        <small class="text-muted">@DateTime.Now.ToString("HH:mm")</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .team-logo {
+        font-size: 2rem;
+        margin: 0.5rem 0;
+    }
+
+    .btn-group .btn {
+        min-width: 120px;
+    }
+
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    .border-start {
+        border-width: 4px !important;
+    }
+</style>
+
+<!-- Scripts -->
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Auto refresh every 5 minutes
+    setTimeout(function() {
+        location.reload();
+    }, 300000);
+</script>
+
+@functions {
+    private string GetDateDisplayName(string filter)
+    {
+        return filter?.ToLower() switch
+        {
+            "yesterday" => "أمس",
+            "tomorrow" => "غداً",
+            _ => "اليوم"
+        };
+    }
+}

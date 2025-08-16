@@ -1,62 +1,471 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GoalArena</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Goal Arena</title>
+
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts Arabic -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GoalArena.styles.css" asp-append-version="true" />
+
+    <style>
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 2rem;
+            color: white !important;
+            text-decoration: none;
+        }
+
+            .navbar-brand:hover {
+                color: #ffd700 !important;
+                transform: scale(1.05);
+                transition: all 0.3s ease;
+            }
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+            .navbar-nav .nav-link:hover {
+                background-color: rgba(255,255,255,0.1);
+                color: white !important;
+                transform: translateY(-2px);
+            }
+
+            .navbar-nav .nav-link.active {
+                background-color: rgba(255,255,255,0.2);
+                color: white !important;
+            }
+
+        .dropdown-menu {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-item {
+            color: #333;
+            padding: 0.5rem 1.5rem;
+            border-radius: 10px;
+            margin: 0.2rem;
+        }
+
+            .dropdown-item:hover {
+                background-color: #667eea;
+                color: white;
+            }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding-top: 2rem;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+            .footer a {
+                color: #ffd700;
+                text-decoration: none;
+                transition: all 0.3s ease;
+            }
+
+                .footer a:hover {
+                    color: white;
+                    text-decoration: underline;
+                    transform: translateY(-1px);
+                }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .footer-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+   
+            
+        {
+            text-align: center;
+            padding-top: 1rem;
+        }
+
+        }
+
+        /* Animation for alerts */
+        .alert {
+            animation: slideIn 0.5s ease-out;
+        }
+
+
+        {                                                                                                       
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #764ba2;
+            }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+       
+
+        {
+            transform: rotate(360deg);
+        }
+
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GoalArena</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-futbol me-2"></i>
+                    Goal Arena
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل التنقل">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> الرئيسية
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index" asp-route-dateFilter="today">
+                                <i class="fas fa-calendar-day"></i> مباريات اليوم
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="matchesDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-futbol"></i> المباريات
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="matchesDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Home" asp-action="Index" asp-route-dateFilter="yesterday">
+                                        <i class="fas fa-chevron-right"></i> مباريات أمس
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Home" asp-action="Index" asp-route-dateFilter="today">
+                                        <i class="fas fa-calendar-day"></i> مباريات اليوم
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Home" asp-action="Index" asp-route-dateFilter="tomorrow">
+                                        <i class="fas fa-chevron-left"></i> مباريات غداً
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="ticketsDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ticket-alt"></i> التذاكر
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="ticketsDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Ticket" asp-action="SearchTickets">
+                                        <i class="fas fa-search"></i> البحث عن تذكرة
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Ticket" asp-action="MyTickets">
+                                        <i class="fas fa-list"></i> تذاكري
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                                        <i class="fas fa-plus"></i> حجز تذكرة جديدة
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
-                    <<ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        @if (User is not null && User.Identity.IsAuthenticated)
+
+                    <!-- User Authentication Menu -->
+                    <ul class="navbar-nav">
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Logout">Logout</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Identity/Profile/Index">Welcome @User.Identity.Name</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle"></i>
+                                    مرحباً @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="/Identity/Account/Manage">
+                                            <i class="fas fa-cog"></i> إدارة الحساب
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Customer" asp-controller="Ticket" asp-action="MyTickets">
+                                            <i class="fas fa-ticket-alt"></i> تذاكري
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Identity/Account/Logout">
+                                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Login</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Register">Register</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Identity/Account/Login">
+                                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Identity/Account/Register">
+                                    <i class="fas fa-user-plus"></i> إنشاء حساب
+                                </a>
+                            </li>
                         }
+
+                        <!-- Quick Search -->
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#quickSearchModal">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Success/Error Messages -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle"></i> @TempData["Message"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Quick Search Modal -->
+    <div class="modal fade" id="quickSearchModal" tabindex="-1" aria-labelledby="quickSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quickSearchModalLabel">
+                        <i class="fas fa-search"></i> البحث السريع
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-area="Customer" asp-controller="Ticket" asp-action="Search" method="get">
+                        <div class="mb-3">
+                            <label for="quickTicketNumber" class="form-label">رقم التذكرة</label>
+                            <input type="text" class="form-control" id="quickTicketNumber" name="ticketNumber"
+                                   placeholder="مثال: TKT20231025001">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> بحث
+                            </button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <a href="@Url.Action("SearchTickets", "Ticket")" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> خيارات البحث المتقدم
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer m-4">
         <div class="container">
-            &copy; 2025 - GoalArena - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12 text-center text-lg-start mb-3 mb-lg-0">
+                    <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
+                        <i class="fas fa-futbol me-2"></i>
+                        <span>&copy; 2025 - Goal Arena - جميع الحقوق محفوظة</span>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 text-center text-lg-end">
+                    <div class="d-flex justify-content-center justify-content-lg-end align-items-center flex-wrap gap-2 gap-md-3">
+                        <a asp-area="Customer" asp-controller="Home" asp-action="Privacy" class="footer-link">
+                            <i class="fas fa-shield-alt"></i> سياسة الخصوصية
+                        </a>
+                        <span class="d-none d-md-inline">|</span>
+                        <a href="tel:16580" class="footer-link">
+                            <i class="fas fa-phone"></i> 16580
+                        </a>
+                        <span class="d-none d-md-inline">|</span>
+                        <a href="mailto:support@goalarena.com" class="footer-link">
+                            <i class="fas fa-envelope"></i> الدعم الفني
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+
+        // Active navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+            navLinks.forEach(function(link) {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Loading state for forms
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<span class="loading"></span> جاري المعالجة...';
+                        submitBtn.disabled = true;
+
+                        // Re-enable after 5 seconds as fallback
+                        setTimeout(function() {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        }, 5000);
+                    }
+                });
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
