@@ -17,7 +17,7 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.TotalSeasons = _context.Seasons.Count();
             ViewBag.TotalTeams = _context.Teams.Count();
             ViewBag.TotalTournaments = _context.Tournaments.Count();
-
+            ViewBag.totalPlayers = _context.Players.Count();
             return View();
         }
     }

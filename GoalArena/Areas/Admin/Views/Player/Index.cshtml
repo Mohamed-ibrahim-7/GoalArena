@@ -1,0 +1,75 @@
+﻿@model IEnumerable<GoalArena.Models.Player>
+
+@{
+    ViewData["Title"] = "Players";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Player List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Player
+            </a>
+        </div>
+    </div>
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Age</th>
+                <th>National Team</th>
+                <th>Team</th>
+                <th>Goals</th>
+                <th>Assists</th>
+                <th>Matches</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(player.ImageUrl))
+                        {
+                            <img src="@player.ImageUrl" alt="@player.Name" width="50" height="50" style="object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>@player.Name</td>
+                    <td>@player.Position</td>
+                    <td>@player.Age</td>
+                    <td>@player.NationalTeam</td>
+                    <td>@(player.Team != null ? player.Team.Name : "N/A")</td>
+                    <td>@player.Goals</td>
+                    <td>@player.Assists</td>
+                    <td>@player.MatchesPlayed</td>
+                    <td>
+                        <div class="w-100 btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@player.PlayerId" class="btn btn-primary mx-1">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@player.PlayerId" class="btn btn-info mx-1">
+                                <i class="bi bi-info-circle"></i> Details
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@player.PlayerId" class="btn btn-danger mx-1">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
