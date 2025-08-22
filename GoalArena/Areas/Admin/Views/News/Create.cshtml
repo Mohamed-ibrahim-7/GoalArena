@@ -1,51 +1,68 @@
-﻿@model GoalArena.Models.News
+﻿@using GoalArena.ViewModels
+@model MatchWithPlayerWithTeamVM
 
-@{
-    ViewData["Title"] = "Create News";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-
-<div class="container p-3">
-    <h2 class="text-primary">Create News</h2>
-    <hr />
-    <form asp-action="Create" method="post">
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="alert alert-danger">
-                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    <div>@error.ErrorMessage</div>
-                }
-            </div>
-        }
-
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Create New Product</h2>
         </div>
-        <div class="mb-3">
-            <label asp-for="Content" class="form-label"></label>
-            <input asp-for="Content" class="form-control" />
-            <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="name" name="News.Title" value="@Model.News!.Title">
+                    <span class="text-danger" asp-validation-for="News.Title"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="Content" class="form-label">Content</label>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a Content here" id="Content" style="height: 100px" name="Product.Content">@Model.News!.Content</textarea>
+                        <label for="Content">You Content Here...</label>
+                    </div>
+                    <span class="text-danger" asp-validation-for="News.Content"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="News.PublishedDate" class="form-label"></label>
+                    <input asp-for="News.PublishedDate" class="form-control" type="datetime-local" />
+                    <span class="text-danger" asp-validation-for="News.PublishedDate"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="playerId" class="form-label">playerId</label>
+                    <select class="form-select" asp-for="News.playerId" asp-items="Model.Players"></select>
+                    <span class="text-danger" asp-validation-for="News.playerId"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="TeamId" class="form-label">TeamId</label>
+                    <select class="form-select" asp-for="News.playerId" asp-items="Model.Teams"></select>
+                    <span class="text-danger" asp-validation-for="News.TeamId"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="MatchId" class="form-label">MatchId</label>
+                    <select class="form-select" asp-for="News.TeamId" asp-items="Model.Matches"></select>
+                    <span class="text-danger" asp-validation-for="News.MatchId"></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
-       
-        <div class="mb-3">
-            <label asp-for="PublishedDate" class="form-label"></label>
-            <input asp-for="PublishedDate" class="form-control" type="date" />
-            <span asp-validation-for="PublishedDate" class="text-danger"></span>
-        </div>
-       
-       
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </form>
+    </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-}
+</script>

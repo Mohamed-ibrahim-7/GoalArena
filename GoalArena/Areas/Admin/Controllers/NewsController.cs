@@ -1,6 +1,10 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Threading.Tasks;
 
 namespace GoalArena.Areas.Admin.Controllers
 {
@@ -8,72 +12,173 @@ namespace GoalArena.Areas.Admin.Controllers
     public class NewsController : Controller
     {
         private readonly InewsRepository _newsRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly ITeamRepository _teamRepository;
+        private readonly ImatchRepository _matchRepository;
 
-        public NewsController(InewsRepository newsRepository)
+        public NewsController(InewsRepository newsRepository , IPlayerRepository playerRepository , ITeamRepository teamRepository , ImatchRepository matchRepository)
         {
             _newsRepository = newsRepository;
+            _matchRepository = matchRepository;
+            _playerRepository = playerRepository;
+            _teamRepository = teamRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            var newsList = await _newsRepository.GetAsync();
-            return View(newsList);
+            var news = await _newsRepository.GetAsync(includes: [e =>e.Match , e =>e.Player , e=>e.Team]);
+            return View(news);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var players = await _playerRepository.GetAsync();
+            var teams = await _teamRepository.GetAsync();
+            var matches = await _matchRepository.GetAsync();
+            MatchWithPlayerWithTeamVM  matchWithPlayerWithTeamVM=new()
+            {
+                Players = players.Select(e => new SelectListItem()
+                {
+                    Text = e.Name,
+                    Value = e.PlayerId.ToString()
+                }).ToList(),
+                Teams = teams.Select(e => new SelectListItem()
+                {
+                    Text = e.Name,
+                    Value = e.Id.ToString()
+                }).ToList(),
+                Matches = matches.Select(e => new SelectListItem()
+                {
+                    Text = e.MatchDate.ToString("yyyy-MM-dd"),
+                    Value = e.MatchId.ToString()
+                }).ToList(),
+                News= new()
+            };
+            return View(matchWithPlayerWithTeamVM);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(News news)
         {
             if (!ModelState.IsValid)
-                return View(news);
+            {
+                var players = await _playerRepository.GetAsync();
+                var teams = await _teamRepository.GetAsync();
+                var matches = await _matchRepository.GetAsync();
+                MatchWithPlayerWithTeamVM matchWithPlayerWithTeamVM = new()
+                {
+                    Players = players.Select(e => new SelectListItem()
+                    {
+                        Text = e.Name,
+                        Value = e.PlayerId.ToString()
+                    }).ToList(),
+                    Teams = teams.Select(e => new SelectListItem()
+                    {
+                        Text = e.Name,
+                        Value = e.Id.ToString()
+                    }).ToList(),
+                    Matches = matches.Select(e => new SelectListItem()
+                    {
+                        Text = e.MatchDate.ToString("yyyy-MM-dd"),
+                        Value = e.MatchId.ToString()
+                    }).ToList(),
+                    News = new()
+                };
+                return View(matchWithPlayerWithTeamVM);
+            }
+            return BadRequest();
 
-            await _newsRepository.CreateAsync(news);
-            await _newsRepository.CommitAsync();
-
-            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            var newsItem = await _newsRepository.GetOneAsync(e => e.Id == id);
-            if (newsItem == null)
-                return NotFound();
+            var news = await _newsRepository.GetOneAsync(e => e.Id == id);
+            if (news is not null)
+            {
 
-            return View(newsItem);
+                var players = await _playerRepository.GetAsync();
+                var teams = await _teamRepository.GetAsync();
+                var matches = await _matchRepository.GetAsync();
+                MatchWithPlayerWithTeamVM matchWithPlayerWithTeamVM = new()
+                {
+                    Players = players.Select(e => new SelectListItem()
+                    {
+                        Text = e.Name,
+                        Value = e.PlayerId.ToString()
+                    }).ToList(),
+                    Teams = teams.Select(e => new SelectListItem()
+                    {
+                        Text = e.Name,
+                        Value = e.Id.ToString()
+                    }).ToList(),
+                    Matches = matches.Select(e => new SelectListItem()
+                    {
+                        Text = e.MatchDate.ToString("yyyy-MM-dd"),
+                        Value = e.MatchId.ToString()
+                    }).ToList(),
+                    News = new()
+                };
+
+                return View(matchWithPlayerWithTeamVM);
+            }
+            return RedirectToAction("NotFoundPage", "Home");
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(News news)
         {
-            if (!ModelState.IsValid)
-                return View(news);
+            var newsInDB = await _newsRepository.GetOneAsync(e => e.Id == news.Id, tracked: false);
+            if (newsInDB is not null)
+            {
+                if (!ModelState.IsValid)
+                {
+                    var players = await _playerRepository.GetAsync();
+                    var teams = await _teamRepository.GetAsync();
+                    var matches = await _matchRepository.GetAsync();
+                    MatchWithPlayerWithTeamVM matchWithPlayerWithTeamVM = new()
+                    {
+                        Players = players.Select(e => new SelectListItem()
+                        {
+                            Text = e.Name,
+                            Value = e.PlayerId.ToString()
+                        }).ToList(),
+                        Teams = teams.Select(e => new SelectListItem()
+                        {
+                            Text = e.Name,
+                            Value = e.Id.ToString()
+                        }).ToList(),
+                        Matches = matches.Select(e => new SelectListItem()
+                        {
+                            Text = e.MatchDate.ToString("yyyy-MM-dd"),
+                            Value = e.MatchId.ToString()
+                        }).ToList(),
+                        News = new()
+                    };
 
-            _newsRepository.Edit(news);
-            await _newsRepository.CommitAsync();
-
-            return RedirectToAction(nameof(Index));
+                    return View(matchWithPlayerWithTeamVM);
+                }
+            }
+            return NotFound();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var newsItem = await _newsRepository.GetOneAsync(e => e.Id == id);
-            if (newsItem == null)
-                return NotFound();
+            var news = await _newsRepository.GetOneAsync(e => e.Id == id);
 
-            _newsRepository.Delete(newsItem);
-            await _newsRepository.CommitAsync();
+            if (news is not null)
+            {
+                
+                _newsRepository.Delete(news);
+                await _matchRepository.CommitAsync();
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction("NotFoundPage", "Home");
         }
     }
 }
