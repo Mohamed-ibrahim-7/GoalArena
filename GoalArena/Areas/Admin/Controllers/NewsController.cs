@@ -59,7 +59,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(News news)
+        public async Task<IActionResult> Create(News news,IFormFile imageUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -87,6 +87,26 @@ namespace GoalArena.Areas.Admin.Controllers
                 };
                 return View(matchWithPlayerWithTeamVM);
             }
+          if (imageUrl is not null && imageUrl.Length > 0)
+          {
+              var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageUrl.FileName);
+              var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", fileName);
+          
+              // Save img in wwwroot
+              using (var stream = System.IO.File.Create(filePath))
+              {
+                  imageUrl.CopyTo(stream);
+              }
+
+                // Save img in DB
+                news.ImageUrl = fileName;
+          
+              // Save product in DB
+              await _newsRepository.CreateAsync(news);
+              await _matchRepository.CommitAsync();
+          
+              return RedirectToAction(nameof(Index));
+          }
             return BadRequest();
 
         }

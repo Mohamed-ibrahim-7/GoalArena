@@ -11,7 +11,7 @@
         public Team? Team { get; set; }
         public int MatchId { get; set; }
         public Match? Match { get; set; }
-
+        public string? ImageUrl { get; set; } =string.Empty;
 
 
     }

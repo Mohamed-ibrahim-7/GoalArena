@@ -6,11 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class aaaa1 : Migration
+    public partial class Create000 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "ImageUrl",
+                table: "News",
+                type: "nvarchar(max)",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "UserOTPs",
                 columns: table => new
@@ -45,6 +51,10 @@ namespace DataAccess.Migrations
         {
             migrationBuilder.DropTable(
                 name: "UserOTPs");
+
+            migrationBuilder.DropColumn(
+                name: "ImageUrl",
+                table: "News");
         }
     }
 }
