@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-12">
-            <h2 class="display-6">Create New Product</h2>
+            <h2 class="display-6">Create New News</h2>
         </div>
     </div>
 
@@ -23,6 +23,12 @@
                         <label for="Content">You Content Here...</label>
                     </div>
                     <span class="text-danger" asp-validation-for="News.Content"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="imageUrl" class="form-label">ImageUrl</label>
+                    <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*" onchange="previewImage(event)">
+                    <img id="imagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="display: none; max-height: 200px;" />
+                    <span class="text-danger" asp-validation-for="News.ImageUrl"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="News.PublishedDate" class="form-label"></label>
