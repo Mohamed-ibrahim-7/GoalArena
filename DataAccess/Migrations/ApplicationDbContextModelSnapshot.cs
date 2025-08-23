@@ -140,7 +140,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Matches");
+                    b.ToTable("Matches", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.MatchEvent", b =>
@@ -172,7 +172,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("MatchEvents");
+                    b.ToTable("MatchEvents", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.News", b =>
@@ -184,9 +184,6 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MatchId")
@@ -217,7 +214,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("playerId");
 
-                    b.ToTable("News");
+                    b.ToTable("News", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.Player", b =>
@@ -263,7 +260,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.Season", b =>
@@ -294,7 +291,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Seasons");
+                    b.ToTable("Seasons", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.Team", b =>
@@ -322,7 +319,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("SeasonId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.TeamSeason", b =>
@@ -351,7 +348,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("TeamSeasons");
+                    b.ToTable("TeamSeasons", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.Ticket", b =>
@@ -387,7 +384,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("MatchId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("GoalArena.Models.Tournament", b =>
@@ -412,7 +409,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("TournamentId");
 
-                    b.ToTable("Tournaments");
+                    b.ToTable("Tournaments", (string)null);
 
                     b.HasData(
                         new
@@ -453,7 +450,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("UserOTPs");
+                    b.ToTable("UserOTPs", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
