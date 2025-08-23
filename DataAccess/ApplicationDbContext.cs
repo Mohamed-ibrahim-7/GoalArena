@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using GoalArena.Data.Seed;
 using GoalArena.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoalArena.Data
 {
@@ -67,7 +68,8 @@ namespace GoalArena.Data
            .HasForeignKey(ts => ts.TeamId)
            .OnDelete(DeleteBehavior.Restrict);
 
-            
+            modelBuilder.Seed();
+
 
 
 
