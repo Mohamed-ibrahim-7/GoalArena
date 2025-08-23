@@ -9,7 +9,7 @@
         public SeasonStatus Status { get; set; }
 
         public int TournamentId { get; set; }
-        public Tournament Tournament { get; set; }       = null!;
+        public Tournament? Tournament { get; set; }       = null!;
 
         public ICollection<Team> Teams { get; set; }     = new List<Team>();
         public ICollection<Match> Matches { get; set; }   = new List<Match>();
