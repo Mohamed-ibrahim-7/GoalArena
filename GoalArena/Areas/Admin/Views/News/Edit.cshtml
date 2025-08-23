@@ -31,9 +31,9 @@
                     <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*" onchange="previewImage(event)">
 
                     <!-- Show current image if exists -->
-                    @if (!string.IsNullOrEmpty(Model.News.ImageUrl))
+                    @if (!string.IsNullOrEmpty(Model.News.ImageNews))
                     {
-                        <img id="imagePreview" src="~/images/@Model.News.ImageUrl" class="img-thumbnail mt-2" style="max-height: 200px;" />
+                        <img id="imagePreview" src="~/images/@Model.News.ImageNews" class="img-thumbnail mt-2" style="max-height: 200px;" />
                     }
                     else
                     {
@@ -41,8 +41,8 @@
                     }
 
                     <!-- Hidden input to keep the old image if not changed -->
-                    <input type="hidden" name="News.OldImageUrl" value="~/images/@Model.News.ImageUrl" />
-                    <span class="text-danger" asp-validation-for="News.ImageUrl"></span>
+                    <input type="hidden" name="News.OldImageUrl" value="~/images/@Model.News.ImageNews" />
+                    <span class="text-danger" asp-validation-for="News.ImageNews"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="News.PublishedDate" class="form-label"></label>

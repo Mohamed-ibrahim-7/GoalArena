@@ -175,6 +175,29 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserOTPs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOTPs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserOTPs_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Seasons",
                 columns: table => new
                 {
@@ -183,6 +206,7 @@ namespace DataAccess.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     TournamentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -381,6 +405,7 @@ namespace DataAccess.Migrations
                     playerId = table.Column<int>(type: "int", nullable: false),
                     TeamId = table.Column<int>(type: "int", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
+                    ImageNews = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TeamId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -529,6 +554,11 @@ namespace DataAccess.Migrations
                 name: "IX_Tickets_MatchId",
                 table: "Tickets",
                 column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOTPs_ApplicationUserId",
+                table: "UserOTPs",
+                column: "ApplicationUserId");
         }
 
         /// <inheritdoc />
@@ -562,16 +592,19 @@ namespace DataAccess.Migrations
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "UserOTPs");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Players");
 
             migrationBuilder.DropTable(
                 name: "Matches");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Teams");

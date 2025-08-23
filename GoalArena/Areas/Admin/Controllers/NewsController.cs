@@ -99,7 +99,7 @@ namespace GoalArena.Areas.Admin.Controllers
               }
 
                 // Save img in DB
-                news.ImageUrl = fileName;
+                news.ImageNews = fileName;
           
               // Save product in DB
               await _newsRepository.CreateAsync(news);

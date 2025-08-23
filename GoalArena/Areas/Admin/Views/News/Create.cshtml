@@ -28,7 +28,7 @@
                     <label for="imageUrl" class="form-label">ImageUrl</label>
                     <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*" onchange="previewImage(event)">
                     <img id="imagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="display: none; max-height: 200px;" />
-                    <span class="text-danger" asp-validation-for="News.ImageUrl"></span>
+                    <span class="text-danger" asp-validation-for="News.ImageNews"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="News.PublishedDate" class="form-label"></label>

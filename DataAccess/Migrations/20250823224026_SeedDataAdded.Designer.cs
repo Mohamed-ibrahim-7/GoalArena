@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250822213347_AddImageUrlToNews")]
-    partial class AddImageUrlToNews
+    [Migration("20250823224026_SeedDataAdded")]
+    partial class SeedDataAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -189,7 +189,7 @@ namespace DataAccess.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageNews")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MatchId")
@@ -416,6 +416,15 @@ namespace DataAccess.Migrations
                     b.HasKey("TournamentId");
 
                     b.ToTable("Tournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            TournamentId = 3,
+                            Country = "أوروبا",
+                            LogoUrl = "/images/tournaments/ucl.png",
+                            Name = "دوري أبطال أوروبا"
+                        });
                 });
 
             modelBuilder.Entity("GoalArena.Models.UserOTP", b =>
