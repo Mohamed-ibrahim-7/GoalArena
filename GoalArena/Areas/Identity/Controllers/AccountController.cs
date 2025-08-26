@@ -308,6 +308,18 @@ namespace GoalArena.Areas.Identity.Controllers
 
             return NotFound();
         }
+        public IActionResult UserProfile()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+
+            var model = new UserProfileVM
+            {
+                UserName = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value,
+                Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value
+              
+            };
+            return View(model);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
