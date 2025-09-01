@@ -1,6 +1,7 @@
 ﻿using GoalArena.Data;
 
 using GoalArena.Models;
+
 using GoalArena.Repositories.IRepositories;
 
 namespace GoalArena.Repositories

@@ -106,17 +106,38 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MatchId"));
 
+                    b.Property<int?>("AwayPenaltyScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AwayScore")
+                        .HasColumnType("int");
+
                     b.Property<int>("AwayTeamId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("HomePenaltyScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HomeScore")
                         .HasColumnType("int");
 
                     b.Property<int>("HomeTeamId")
                         .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("KickOffTime")
+                        .HasColumnType("time");
 
                     b.Property<DateTime>("MatchDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("Result")
                         .HasColumnType("int");
+
+                    b.Property<string>("Round")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SeasonId")
                         .HasColumnType("int");
@@ -125,6 +146,12 @@ namespace DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TeamId1")
                         .HasColumnType("int");
 
                     b.Property<int>("TournamentId")
@@ -137,6 +164,10 @@ namespace DataAccess.Migrations
                     b.HasIndex("HomeTeamId");
 
                     b.HasIndex("SeasonId");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("TeamId1");
 
                     b.HasIndex("TournamentId");
 
@@ -151,10 +182,22 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Corners")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EventType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExtraMinute")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Fouls")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GoalType")
                         .HasColumnType("int");
 
                     b.Property<int>("MatchId")
@@ -163,7 +206,37 @@ namespace DataAccess.Migrations
                     b.Property<int>("Minute")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Offsides")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PassAccuracy")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Possession")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RedCards")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RelatedPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Saves")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Shots")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ShotsOnTarget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("YellowCards")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -171,6 +244,10 @@ namespace DataAccess.Migrations
                     b.HasIndex("MatchId");
 
                     b.HasIndex("PlayerId");
+
+                    b.HasIndex("RelatedPlayerId");
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("MatchEvents");
                 });
@@ -234,6 +311,13 @@ namespace DataAccess.Migrations
                     b.Property<int>("Assists")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Goals")
                         .HasColumnType("int");
 
@@ -244,6 +328,9 @@ namespace DataAccess.Migrations
                     b.Property<int>("MatchesPlayed")
                         .HasColumnType("int");
 
+                    b.Property<int>("MinutesPlayed")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -252,11 +339,27 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Nationality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RedCards")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecondaryPosition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShirtNumber")
+                        .HasColumnType("int");
+
                     b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("YellowCards")
                         .HasColumnType("int");
 
                     b.HasKey("PlayerId");
@@ -305,17 +408,62 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Coach")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Colors")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Draws")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Founded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GoalsAgainst")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoalsFor")
+                        .HasColumnType("int");
+
                     b.Property<string>("LogoUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Played")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
                     b.Property<int>("SeasonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Stadium")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StadiumCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Wins")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -333,6 +481,30 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Draws")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Form")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GoalsAgainst")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoalsFor")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsQualified")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRelegated")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Played")
+                        .HasColumnType("int");
+
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
@@ -343,6 +515,9 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Wins")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -609,6 +784,14 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GoalArena.Models.Team", null)
+                        .WithMany("AwayMatches")
+                        .HasForeignKey("TeamId");
+
+                    b.HasOne("GoalArena.Models.Team", null)
+                        .WithMany("HomeMatches")
+                        .HasForeignKey("TeamId1");
+
                     b.HasOne("GoalArena.Models.Tournament", "Tournament")
                         .WithMany("Matches")
                         .HasForeignKey("TournamentId")
@@ -636,9 +819,23 @@ namespace DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("PlayerId");
 
+                    b.HasOne("GoalArena.Models.Player", "RelatedPlayer")
+                        .WithMany()
+                        .HasForeignKey("RelatedPlayerId");
+
+                    b.HasOne("GoalArena.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Match");
 
                     b.Navigation("Player");
+
+                    b.Navigation("RelatedPlayer");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("GoalArena.Models.News", b =>
@@ -815,6 +1012,10 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("GoalArena.Models.Team", b =>
                 {
+                    b.Navigation("AwayMatches");
+
+                    b.Navigation("HomeMatches");
+
                     b.Navigation("News");
 
                     b.Navigation("Players");

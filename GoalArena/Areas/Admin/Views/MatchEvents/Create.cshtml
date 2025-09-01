@@ -1,0 +1,38 @@
+﻿@model GoalArena.Models.MatchEvent
+
+@{
+    ViewData["Title"] = "Create Match Event";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Create Match Event</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="MatchId" class="form-label">Match</label>
+        <select asp-for="MatchId" class="form-control" asp-items="ViewBag.Matches"></select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EventType" class="form-label"></label>
+        <select asp-for="EventType" class="form-control">
+            <option value="Goal">Goal</option>
+            <option value="YellowCard">Yellow Card</option>
+            <option value="RedCard">Red Card</option>
+            <option value="Substitution">Substitution</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Player" class="form-label"></label>
+        <input asp-for="Player" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Minute" class="form-label"></label>
+        <input asp-for="Minute" type="number" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>

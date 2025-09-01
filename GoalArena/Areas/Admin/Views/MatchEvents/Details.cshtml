@@ -1,0 +1,29 @@
+﻿@model GoalArena.Models.MatchEvent
+
+@{
+    ViewData["Title"] = "Match Event Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Match Event Details</h2>
+
+<div class="card p-3">
+    <dl class="row">
+        <dt class="col-sm-3">Match</dt>
+        <dd class="col-sm-9">@Model.Match?.HomeTeam?.Name vs @Model.Match?.AwayTeam?.Name</dd>
+
+        <dt class="col-sm-3">Event Type</dt>
+        <dd class="col-sm-9">@Model.EventType</dd>
+
+        <dt class="col-sm-3">Player</dt>
+        <dd class="col-sm-9">@Model.Player</dd>
+
+        <dt class="col-sm-3">Minute</dt>
+        <dd class="col-sm-9">@Model.Minute</dd>
+    </dl>
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</p>

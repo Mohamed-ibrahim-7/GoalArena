@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddNewDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -227,8 +227,23 @@ namespace DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShortName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Coach = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Founded = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Stadium = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StadiumCapacity = table.Column<int>(type: "int", nullable: true),
+                    Colors = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Played = table.Column<int>(type: "int", nullable: false),
+                    Wins = table.Column<int>(type: "int", nullable: false),
+                    Draws = table.Column<int>(type: "int", nullable: false),
+                    Losses = table.Column<int>(type: "int", nullable: false),
+                    GoalsFor = table.Column<int>(type: "int", nullable: false),
+                    GoalsAgainst = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<int>(type: "int", nullable: false),
                     SeasonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -251,11 +266,20 @@ namespace DataAccess.Migrations
                     HomeTeamId = table.Column<int>(type: "int", nullable: false),
                     AwayTeamId = table.Column<int>(type: "int", nullable: false),
                     MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    KickOffTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     Stadium = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Round = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HomeScore = table.Column<int>(type: "int", nullable: true),
+                    AwayScore = table.Column<int>(type: "int", nullable: true),
+                    HomePenaltyScore = table.Column<int>(type: "int", nullable: true),
+                    AwayPenaltyScore = table.Column<int>(type: "int", nullable: true),
                     Result = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SeasonId = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false)
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: true),
+                    TeamId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -279,6 +303,16 @@ namespace DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Matches_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Matches_Teams_TeamId1",
+                        column: x => x.TeamId1,
+                        principalTable: "Teams",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Matches_Tournaments_TournamentId",
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
@@ -293,14 +327,22 @@ namespace DataAccess.Migrations
                     PlayerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SecondaryPosition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Age = table.Column<int>(type: "int", nullable: false),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NationalTeam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ShirtNumber = table.Column<int>(type: "int", nullable: true),
                     TeamId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MatchesPlayed = table.Column<int>(type: "int", nullable: false),
                     Goals = table.Column<int>(type: "int", nullable: false),
                     Assists = table.Column<int>(type: "int", nullable: false),
-                    MatchesPlayed = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    YellowCards = table.Column<int>(type: "int", nullable: false),
+                    RedCards = table.Column<int>(type: "int", nullable: false),
+                    MinutesPlayed = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -321,8 +363,17 @@ namespace DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TeamId = table.Column<int>(type: "int", nullable: false),
                     SeasonId = table.Column<int>(type: "int", nullable: false),
+                    Played = table.Column<int>(type: "int", nullable: false),
+                    Wins = table.Column<int>(type: "int", nullable: false),
+                    Draws = table.Column<int>(type: "int", nullable: false),
+                    Losses = table.Column<int>(type: "int", nullable: false),
+                    GoalsFor = table.Column<int>(type: "int", nullable: false),
+                    GoalsAgainst = table.Column<int>(type: "int", nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
-                    Rank = table.Column<int>(type: "int", nullable: false)
+                    Rank = table.Column<int>(type: "int", nullable: false),
+                    Form = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsQualified = table.Column<bool>(type: "bit", nullable: false),
+                    IsRelegated = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -372,10 +423,24 @@ namespace DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MatchId = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
                     PlayerId = table.Column<int>(type: "int", nullable: true),
+                    RelatedPlayerId = table.Column<int>(type: "int", nullable: true),
                     Minute = table.Column<int>(type: "int", nullable: false),
+                    ExtraMinute = table.Column<int>(type: "int", nullable: true),
                     EventType = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    GoalType = table.Column<int>(type: "int", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Shots = table.Column<int>(type: "int", nullable: true),
+                    ShotsOnTarget = table.Column<int>(type: "int", nullable: true),
+                    Possession = table.Column<int>(type: "int", nullable: true),
+                    PassAccuracy = table.Column<int>(type: "int", nullable: true),
+                    Fouls = table.Column<int>(type: "int", nullable: true),
+                    Corners = table.Column<int>(type: "int", nullable: true),
+                    Offsides = table.Column<int>(type: "int", nullable: true),
+                    YellowCards = table.Column<int>(type: "int", nullable: true),
+                    RedCards = table.Column<int>(type: "int", nullable: true),
+                    Saves = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -391,6 +456,17 @@ namespace DataAccess.Migrations
                         column: x => x.PlayerId,
                         principalTable: "Players",
                         principalColumn: "PlayerId");
+                    table.ForeignKey(
+                        name: "FK_MatchEvents_Players_RelatedPlayerId",
+                        column: x => x.RelatedPlayerId,
+                        principalTable: "Players",
+                        principalColumn: "PlayerId");
+                    table.ForeignKey(
+                        name: "FK_MatchEvents_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -435,6 +511,11 @@ namespace DataAccess.Migrations
                         principalTable: "Teams",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "Tournaments",
+                columns: new[] { "TournamentId", "Country", "LogoUrl", "Name" },
+                values: new object[] { 3, "أوروبا", "/images/tournaments/ucl.png", "دوري أبطال أوروبا" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -491,6 +572,16 @@ namespace DataAccess.Migrations
                 column: "SeasonId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Matches_TeamId",
+                table: "Matches",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Matches_TeamId1",
+                table: "Matches",
+                column: "TeamId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Matches_TournamentId",
                 table: "Matches",
                 column: "TournamentId");
@@ -504,6 +595,16 @@ namespace DataAccess.Migrations
                 name: "IX_MatchEvents_PlayerId",
                 table: "MatchEvents",
                 column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchEvents_RelatedPlayerId",
+                table: "MatchEvents",
+                column: "RelatedPlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchEvents_TeamId",
+                table: "MatchEvents",
+                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_News_MatchId",

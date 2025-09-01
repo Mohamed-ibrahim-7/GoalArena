@@ -1,0 +1,32 @@
+﻿@model GoalArena.Models.MatchEvent
+
+@{
+    ViewData["Title"] = "Delete Match Event";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Delete Match Event</h2>
+
+<h4>Are you sure you want to delete this event?</h4>
+
+<div class="card p-3">
+    <dl class="row">
+        <dt class="col-sm-3">Match</dt>
+        <dd class="col-sm-9">@Model.Match?.HomeTeam?.Name vs @Model.Match?.AwayTeam?.Name</dd>
+
+        <dt class="col-sm-3">Event Type</dt>
+        <dd class="col-sm-9">@Model.EventType</dd>
+
+        <dt class="col-sm-3">Player</dt>
+        <dd class="col-sm-9">@Model.Player</dd>
+
+        <dt class="col-sm-3">Minute</dt>
+        <dd class="col-sm-9">@Model.Minute</dd>
+    </dl>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,4 +1,5 @@
 ﻿using GoalArena.Models;
+
 using GoalArena.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

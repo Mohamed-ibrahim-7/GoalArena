@@ -1,4 +1,6 @@
-﻿namespace GoalArena.Models
+﻿using GoalArena.Models;
+
+namespace GoalArena.Models
 {
     public class News
     {   public int Id { get; set; }
