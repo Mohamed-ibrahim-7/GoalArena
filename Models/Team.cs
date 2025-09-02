@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace GoalArena.Models
 {
     public class Team
-    {
+    {                                                  // seed data   عدل علي الكنترول وضيف الداتا الا هضيفها في 
         public int Id { get; set; }
 
         // بيانات أساسية

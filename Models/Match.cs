@@ -4,7 +4,7 @@ namespace GoalArena.Models
 {
     public class Match
     {
-        public int MatchId { get; set; }
+        public int MatchId { get; set; }          // seed data   عدل علي الكنترول وضيف الداتا الا هضيفها في 
 
         // الفرق
         public int HomeTeamId { get; set; }
