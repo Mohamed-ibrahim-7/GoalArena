@@ -19,6 +19,22 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.TotalTournaments = _context.Tournaments.Count();
             ViewBag.totalPlayers = _context.Players.Count();
             ViewBag.totalNews = _context.News.Count();
+
+
+
+            var standings = _context.TeamSeasons
+        .Include(ts => ts.Team)
+        .ToList() // نجيب كل البيانات (لأن عندك سيزون واحد بس)
+        .OrderByDescending(ts => ts.Points)
+        .ThenByDescending(ts => ts.GoalsFor - ts.GoalsAgainst) // فارق الأهداف
+        .ThenByDescending(ts => ts.GoalsFor)
+        .ToList();
+
+            ViewBag.Standings = standings;
+
+
+
+
             return View();
         }
     }

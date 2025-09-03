@@ -2,51 +2,301 @@
     Layout = "_AdminLayout";
 }
 
-<h1 class="h2 mb-4">Dashboard</h1>
+<style>
+    .dashboard-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card bg-success text-white mb-3">
-            <div class="card-body">
-                <h5>Seasons</h5>
-                <h3>@ViewBag.TotalSeasons</h3>
+    .dashboard-title {
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stats-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.3) 100%);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .card-seasons {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card-teams {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .card-tournaments {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .card-players {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .card-news {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .card-body {
+        padding: 25px;
+        text-align: center;
+        position: relative;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .card-icon {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 2rem;
+        opacity: 0.3;
+    }
+
+    .standings-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-top: 40px;
+        overflow: hidden;
+    }
+
+    .standings-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .standings-table {
+        margin: 0;
+    }
+
+    .standings-table thead th {
+        background: #f8f9fa;
+        border: none;
+        padding: 15px 10px;
+        font-weight: 600;
+        color: #495057;
+        text-align: center;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .standings-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .standings-table tbody tr:hover {
+        background: #f8f9fa;
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .standings-table tbody td {
+        padding: 15px 10px;
+        text-align: center;
+        border: none;
+        vertical-align: middle;
+        font-weight: 500;
+    }
+
+    .position-badge {
+        display: inline-block;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        line-height: 35px;
+        text-align: center;
+        font-weight: 700;
+        color: white;
+    }
+
+    .position-1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #333 !important; }
+    .position-2 { background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 100%); color: #333 !important; }
+    .position-3 { background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%); }
+    .position-default { background: linear-gradient(135deg, #6c757d 0%, #8a92a8 100%); }
+
+    .team-name {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .stat-positive {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    .stat-negative {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .points-column {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-radius: 8px;
+    }
+ {
+
+        .standings-table {
+            font-size: 0.9rem;
+        }
+
+        .standings-table thead th,
+        .standings-table tbody td {
+            padding: 10px 5px;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">لوحة التحكم الرئيسية</h1>
+
+    <div class="row g-4">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card stats-card card-seasons text-white">
+                <div class="card-body">
+                    <div class="card-icon">🏆</div>
+                    <h5 class="card-title">المواسم</h5>
+                    <h3 class="card-number">@ViewBag.TotalSeasons</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card stats-card card-teams text-white">
+                <div class="card-body">
+                    <div class="card-icon">👥</div>
+                    <h5 class="card-title">الفرق</h5>
+                    <h3 class="card-number">@ViewBag.TotalTeams</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card stats-card card-tournaments text-white">
+                <div class="card-body">
+                    <div class="card-icon">🏅</div>
+                    <h5 class="card-title">البطولات</h5>
+                    <h3 class="card-number">@ViewBag.TotalTournaments</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card stats-card card-players text-white">
+                <div class="card-body">
+                    <div class="card-icon">⚽</div>
+                    <h5 class="card-title">اللاعبون</h5>
+                    <h3 class="card-number">@ViewBag.TotalPlayers</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card stats-card card-news text-white">
+                <div class="card-body">
+                    <div class="card-icon">📰</div>
+                    <h5 class="card-title">الأخبار</h5>
+                    <h3 class="card-number">@ViewBag.TotalNews</h3>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card bg-info text-white mb-3">
-            <div class="card-body">
-                <h5>Teams</h5>
-                <h3>@ViewBag.TotalTeams</h3>
-            </div>
+    <div class="standings-section">
+        <div class="standings-header">
+            🏆 جدول ترتيب الدوري
         </div>
-    </div>
+        <div class="table-responsive">
+            <table class="table standings-table">
+                <thead>
+                    <tr>
+                        <th>المركز</th>
+                        <th>الفريق</th>
+                        <th>لعب</th>
+                        <th>فوز</th>
+                        <th>تعادل</th>
+                        <th>خسارة</th>
+                        <th>له</th>
+                        <th>عليه</th>
+                        <th>الفارق</th>
+                        <th>النقاط</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.Standings != null)
+                    {
+                        var rank = 1;
+                        foreach (var item in ViewBag.Standings)
+                        {
+                            var positionClass = rank == 1 ? "position-1" : rank == 2 ? "position-2" : rank == 3 ? "position-3" : "position-default";
+                            var goalDifference = item.GoalsFor - item.GoalsAgainst;
+                            var differenceClass = goalDifference > 0 ? "stat-positive" : goalDifference < 0 ? "stat-negative" : "";
 
-    <div class="col-md-4">
-        <div class="card bg-secondary text-white mb-3">
-            <div class="card-body">
-                <h5>Tournaments</h5>
-                <h3>@ViewBag.TotalTournaments</h3>
-            </div>
-        </div>
-
-        
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white mb-3">
-            <div class="card-body">
-                <h5>Players</h5>
-                <h3>@ViewBag.TotalPlayers</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white mb-3">
-            <div class="card-body">
-                <h5>News</h5>
-                <h3>@ViewBag.TotalNews</h3>
-            </div>
+                            <tr>
+                                <td>
+                                    <span class="position-badge @positionClass">@rank</span>
+                                </td>
+                                <td class="team-name">@item.Team.Name</td>
+                                <td>@item.Played</td>
+                                <td class="stat-positive">@item.Wins</td>
+                                <td>@item.Draws</td>
+                                <td class="stat-negative">@item.Losses</td>
+                                <td class="stat-positive">@item.GoalsFor</td>
+                                <td class="stat-negative">@item.GoalsAgainst</td>
+                                <td class="@differenceClass">
+                                    @(goalDifference > 0 ? "+" + goalDifference : goalDifference.ToString())
+                                </td>
+                                <td>
+                                    <span class="points-column px-3 py-1">@item.Points</span>
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

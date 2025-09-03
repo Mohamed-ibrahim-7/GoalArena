@@ -1228,6 +1228,76 @@ new Team { Id = 21, Name = "Kahrabaa Ismailia", Coach = "TBD", LogoUrl = "/image
                     Description = "زيزو يعادل للزمالك بتسديدة رائعة"
                 }
             );
+            modelBuilder.Entity<TeamSeason>().HasData(
+              new TeamSeason
+              {
+                  Id = 1,
+                  TeamId = 1,   // الأهلي
+                  SeasonId = 1,
+                  Played = 3,
+                  Wins = 3,
+                  Draws = 0,
+                  Losses = 0,
+                  GoalsFor = 7,
+                  GoalsAgainst = 2,
+                  Points = 9,
+                  Rank = 1,
+                  Form = "W W W",
+                  IsQualified = true,
+                  IsRelegated = false
+              },
+              new TeamSeason
+              {
+                  Id = 2,
+                  TeamId = 2,   // الزمالك
+                  SeasonId = 1,
+                  Played = 3,
+                  Wins = 2,
+                  Draws = 0,
+                  Losses = 1,
+                  GoalsFor = 5,
+                  GoalsAgainst = 3,
+                  Points = 6,
+                  Rank = 2,
+                  Form = "W W L",
+                  IsQualified = true,
+                  IsRelegated = false
+              },
+              new TeamSeason
+              {
+                  Id = 3,
+                  TeamId = 3,   // بيراميدز
+                  SeasonId = 1,
+                  Played = 3,
+                  Wins = 1,
+                  Draws = 1,
+                  Losses = 1,
+                  GoalsFor = 4,
+                  GoalsAgainst = 4,
+                  Points = 4,
+                  Rank = 3,
+                  Form = "L W D",
+                  IsQualified = false,
+                  IsRelegated = false
+              },
+              new TeamSeason
+              {
+                  Id = 4,
+                  TeamId = 4,   // المصري
+                  SeasonId = 1,
+                  Played = 3,
+                  Wins = 0,
+                  Draws = 1,
+                  Losses = 2,
+                  GoalsFor = 2,
+                  GoalsAgainst = 6,
+                  Points = 1,
+                  Rank = 4,
+                  Form = "L D L",
+                  IsQualified = false,
+                  IsRelegated = true
+              }
+          );
         }
     }
 }
