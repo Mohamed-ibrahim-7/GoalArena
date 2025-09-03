@@ -8,11 +8,11 @@ namespace GoalArena.Models
             public int Id { get; set; }
 
             public int MatchId { get; set; }
-            public Match Match { get; set; } = null!;
+            public Match? Match { get; set; } = null!;
 
             // الفريق صاحب الحدث
             public int TeamId { get; set; }
-            public Team Team { get; set; } = null!;
+            public Team? Team { get; set; } = null!;
 
             // اللاعب الأساسي في الحدث
             public int? PlayerId { get; set; }

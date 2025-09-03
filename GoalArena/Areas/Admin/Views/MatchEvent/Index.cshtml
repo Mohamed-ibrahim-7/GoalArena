@@ -1,0 +1,97 @@
+﻿@model IEnumerable<GoalArena.Models.MatchEvent>
+
+@{
+    ViewData["Title"] = ViewBag.MatchName != null ? $"Events for {ViewBag.MatchName}" : "Match Events";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    @if (ViewBag.MatchId != null)
+    {
+        <a asp-action="Create" asp-route-matchId="@ViewBag.MatchId" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Event
+        </a>
+    }
+
+    @if (ViewBag.MatchId != null)
+    {
+        <a asp-controller="Match" asp-action="Details" asp-route-id="@ViewBag.MatchId" class="btn btn-secondary">
+            Back to Match
+        </a>
+    }
+    else
+    {
+        <a asp-controller="Match" asp-action="Index" class="btn btn-secondary">
+            Back to Matches
+        </a>
+    }
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        No events found for this match.
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Time</th>
+                            <th>Event Type</th>
+                            @if (ViewBag.MatchId == null)
+                            {
+                                <th>Match</th>
+                            }
+                            <th>Team</th>
+                            <th>Player</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderBy(e => e.Minute))
+                        {
+                            <tr>
+                                <td>@item.Minute'@(item.ExtraMinute.HasValue ? "+" + item.ExtraMinute.Value : "")</td>
+                                <td>
+                                    @item.EventType
+                                    @if (item.EventType == EventType.Goal && item.GoalType.HasValue)
+                                    {
+                                        <span class="text-muted">(@item.GoalType)</span>
+                                    }
+                                </td>
+                                @if (ViewBag.MatchId == null)
+                                {
+                                    <td>
+                                        <a asp-controller="Match" asp-action="Details" asp-route-id="@item.MatchId">
+                                            @item.Match?.HomeTeam?.Name vs @item.Match?.AwayTeam?.Name
+                                        </a>
+                                    </td>
+                                }
+                                <td>@item.Team?.Name</td>
+                                <td>@item.Player?.Name</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

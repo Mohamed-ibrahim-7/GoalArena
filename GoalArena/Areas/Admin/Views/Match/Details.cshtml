@@ -6,31 +6,79 @@
 
 <h2>Match Details</h2>
 
-<div class="card">
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-3">Match Date</dt>
-            <dd class="col-sm-9">@Model.MatchDate.ToString("yyyy-MM-dd HH:mm")</dd>
+<!-- Existing sections for match details -->
+<!-- Add this section for match events -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Match Events</h5>
+                <a asp-controller="MatchEvent" asp-action="Create" asp-route-matchId="@Model.MatchId" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Add Event
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.MatchEvents != null && Model.MatchEvents.Any())
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Player</th>
+                                <th>Team</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var evt in Model.MatchEvents.OrderBy(e => e.Minute))
+                            {
+                                <tr>
+                                    <td>@evt.Minute'@(evt.ExtraMinute.HasValue ? "+" + evt.ExtraMinute.Value : "")</td>
+                                    <td>
+                                        @evt.EventType
+                                        @if (evt.EventType == EventType.Goal && evt.GoalType.HasValue)
+                                        {
+                                            <span class="text-muted">(@evt.GoalType)</span>
+                                        }
+                                    </td>
+                                    <td>@evt.Player?.Name</td>
+                                    <td>@evt.Team?.Name</td>
+                                    <td>@evt.Description</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-controller="MatchEvent" asp-action="Edit" asp-route-id="@evt.Id" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-controller="MatchEvent" asp-action="Delete" asp-route-id="@evt.Id" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-            <dt class="col-sm-3">Stadium</dt>
-            <dd class="col-sm-9">@Model.Stadium</dd>
-
-            <dt class="col-sm-3">Home Team</dt>
-            <dd class="col-sm-9">@Model.HomeTeam?.Name</dd>
-
-            <dt class="col-sm-3">Away Team</dt>
-            <dd class="col-sm-9">@Model.AwayTeam?.Name</dd>
-
-            <dt class="col-sm-3">Season</dt>
-            <dd class="col-sm-9">@Model.Season?.Name</dd>
-
-            <dt class="col-sm-3">Tournament</dt>
-            <dd class="col-sm-9">@Model.Tournament?.Name</dd>
-
-            <dt class="col-sm-3">Status</dt>
-            <dd class="col-sm-9">@Model.Status</dd>
-        </dl>
-        <a asp-action="Edit" asp-route-id="@Model.MatchId" class="btn btn-warning">Edit</a>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <div class="mt-2">
+                        <a asp-controller="MatchEvent" asp-action="Index" asp-route-matchId="@Model.MatchId" class="btn btn-outline-primary btn-sm">
+                            View All Events
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No events recorded for this match yet.
+                    </div>
+                }
+            </div>
+        </div>
     </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.MatchId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

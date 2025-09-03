@@ -12,22 +12,26 @@ namespace GoalArena.Areas.Admin.Controllers
         private readonly ITeamRepository _teamRepository;
         private readonly ISeasonRepository _seasonRepository;
         private readonly ITournamentRepository _tournamentRepository;
+        private readonly IMatchEventRepository _matchEventRepository;
+
         public MatchController(
             ImatchRepository matchRepository,
             ITeamRepository teamRepository,
             ISeasonRepository seasonRepository,
-            ITournamentRepository tournamentRepository)
+            ITournamentRepository tournamentRepository,
+            IMatchEventRepository matchEventRepository)
         {
             _matchRepository = matchRepository;
             _teamRepository = teamRepository;
             _seasonRepository = seasonRepository;
             _tournamentRepository = tournamentRepository;
+            _matchEventRepository = matchEventRepository;
         }
 
         public async Task<IActionResult> Index()
         {
             var matches = await _matchRepository.GetAsync(
-                includes: [m => m.HomeTeam, m => m.AwayTeam, m => m.Season, m => m.Tournament]);
+                includes: [m => m.HomeTeam, m => m.AwayTeam, m => m.Season, m => m.Tournament, m => m.MatchEvents]);
             return View(matches);
         }
 
@@ -35,10 +39,35 @@ namespace GoalArena.Areas.Admin.Controllers
         {
             var match = await _matchRepository.GetOneAsync(
                 m => m.MatchId == id,
-                includes: [m => m.HomeTeam, m => m.AwayTeam, m => m.Season, m => m.Tournament]);
+                includes: [
+                    m => m.HomeTeam,
+            m => m.AwayTeam,
+            m => m.Season,
+            m => m.Tournament,
+            m => m.MatchEvents,
+            m => m.News,
+            m => m.Tickets
+                ]);
+
             if (match == null) return NotFound();
+
+            
+            var matchEvents = await _matchEventRepository.GetAsync(
+                filter: e => e.MatchId == id,
+                includes: [
+                    e => e.Player,
+            e => e.RelatedPlayer,
+            e => e.Team
+                ]);
+
+            if (matchEvents != null)
+            {
+                match.MatchEvents = matchEvents.ToList();
+            }
+
             return View(match);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -52,6 +81,17 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.Seasons = seasons.Select(s => new SelectListItem { Value = s.SeasonId.ToString(), Text = s.Name }).ToList();
             ViewBag.Tournaments = tournaments.Select(t => new SelectListItem { Value = t.TournamentId.ToString(), Text = t.Name }).ToList();
 
+            
+            ViewBag.MatchStatuses = Enum.GetValues(typeof(MatchStatus))
+                .Cast<MatchStatus>()
+                .Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() })
+                .ToList();
+
+            ViewBag.MatchResults = Enum.GetValues(typeof(MatchResult))
+                .Cast<MatchResult>()
+                .Select(r => new SelectListItem { Value = ((int)r).ToString(), Text = r.ToString() })
+                .ToList();
+
             return View();
         }
 
@@ -59,6 +99,7 @@ namespace GoalArena.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Match match)
         {
+            
             if (ModelState.IsValid)
             {
                 await _matchRepository.CreateAsync(match);
@@ -66,7 +107,6 @@ namespace GoalArena.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            
             var teams = await _teamRepository.GetAsync();
             var seasons = await _seasonRepository.GetAsync();
             var tournaments = await _tournamentRepository.GetAsync();
@@ -76,13 +116,27 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.Seasons = seasons.Select(s => new SelectListItem { Value = s.SeasonId.ToString(), Text = s.Name }).ToList();
             ViewBag.Tournaments = tournaments.Select(t => new SelectListItem { Value = t.TournamentId.ToString(), Text = t.Name }).ToList();
 
+            
+            ViewBag.MatchStatuses = Enum.GetValues(typeof(MatchStatus))
+                .Cast<MatchStatus>()
+                .Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() })
+                .ToList();
+
+            ViewBag.MatchResults = Enum.GetValues(typeof(MatchResult))
+                .Cast<MatchResult>()
+                .Select(r => new SelectListItem { Value = ((int)r).ToString(), Text = r.ToString() })
+                .ToList();
+
             return View(match);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var match = await _matchRepository.GetOneAsync(m => m.MatchId == id);
+            var match = await _matchRepository.GetOneAsync(
+                m => m.MatchId == id,
+                includes: [m => m.HomeTeam, m => m.AwayTeam, m => m.Season, m => m.Tournament]);
+
             if (match == null) return NotFound();
 
             var teams = await _teamRepository.GetAsync();
@@ -93,6 +147,17 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.AwayTeams = teams.Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name }).ToList();
             ViewBag.Seasons = seasons.Select(s => new SelectListItem { Value = s.SeasonId.ToString(), Text = s.Name }).ToList();
             ViewBag.Tournaments = tournaments.Select(t => new SelectListItem { Value = t.TournamentId.ToString(), Text = t.Name }).ToList();
+
+            
+            ViewBag.MatchStatuses = Enum.GetValues(typeof(MatchStatus))
+                .Cast<MatchStatus>()
+                .Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() })
+                .ToList();
+
+            ViewBag.MatchResults = Enum.GetValues(typeof(MatchResult))
+                .Cast<MatchResult>()
+                .Select(r => new SelectListItem { Value = ((int)r).ToString(), Text = r.ToString() })
+                .ToList();
 
             return View(match);
         }
@@ -105,12 +170,12 @@ namespace GoalArena.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                
                 _matchRepository.Edit(match);
                 await _matchRepository.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            
             var teams = await _teamRepository.GetAsync();
             var seasons = await _seasonRepository.GetAsync();
             var tournaments = await _tournamentRepository.GetAsync();
@@ -120,12 +185,26 @@ namespace GoalArena.Areas.Admin.Controllers
             ViewBag.Seasons = seasons.Select(s => new SelectListItem { Value = s.SeasonId.ToString(), Text = s.Name }).ToList();
             ViewBag.Tournaments = tournaments.Select(t => new SelectListItem { Value = t.TournamentId.ToString(), Text = t.Name }).ToList();
 
+           
+            ViewBag.MatchStatuses = Enum.GetValues(typeof(MatchStatus))
+                .Cast<MatchStatus>()
+                .Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() })
+                .ToList();
+
+            ViewBag.MatchResults = Enum.GetValues(typeof(MatchResult))
+                .Cast<MatchResult>()
+                .Select(r => new SelectListItem { Value = ((int)r).ToString(), Text = r.ToString() })
+                .ToList();
+
             return View(match);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var match = await _matchRepository.GetOneAsync(m => m.MatchId == id);
+            var match = await _matchRepository.GetOneAsync(
+                m => m.MatchId == id,
+                includes: [m => m.HomeTeam, m => m.AwayTeam]);
+
             if (match == null) return NotFound();
 
             _matchRepository.Delete(match);

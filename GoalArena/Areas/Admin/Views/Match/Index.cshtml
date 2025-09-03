@@ -4,40 +4,213 @@
     ViewData["Title"] = "Matches";
 }
 
-<h2>Matches</h2>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Match Management</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Create New Match
+        </a>
+    </div>
 
-<a asp-action="Create" class="btn btn-primary mb-3">Create New Match</a>
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">All Matches</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Home Team</th>
+                            <th>Score</th>
+                            <th>Away Team</th>
+                            <th>Stadium</th>
+                            <th>Round</th>
+                            <th>Tournament</th>
+                            <th>Season</th>
+                            <th>Status</th>
+                            <th>Result</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var match in Model.OrderByDescending(m => m.MatchDate))
+                        {
+                            <tr>
+                                <td>@match.MatchId</td>
+                                <td>@match.MatchDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(match.KickOffTime?.ToString(@"hh\:mm") ?? "-")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(match.HomeTeam?.LogoUrl))
+                                        {
+                                            <img src="@match.HomeTeam.LogoUrl" alt="@match.HomeTeam.Name" class="team-logo me-2" style="width: 24px; height: 24px;" />
+                                        }
+                                        @match.HomeTeam?.Name
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (match.HomeScore.HasValue && match.AwayScore.HasValue)
+                                    {
+                                        <span class="badge bg-secondary">@match.HomeScore - @match.AwayScore</span>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Match Date</th>
-            <th>Stadium</th>
-            <th>Home Team</th>
-            <th>Away Team</th>
-            <th>Season</th>
-            <th>Tournament</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var match in Model)
-        {
-            <tr>
-                <td>@match.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@match.Stadium</td>
-                <td>@match.HomeTeam?.Name</td>
-                <td>@match.AwayTeam?.Name</td>
-                <td>@match.Season?.Name</td>
-                <td>@match.Tournament?.Name</td>
-                <td>@match.Status</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@match.MatchId" class="btn btn-info btn-sm">Details</a>
-                    <a asp-action="Edit" asp-route-id="@match.MatchId" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@match.MatchId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                        @if (match.HomePenaltyScore.HasValue && match.AwayPenaltyScore.HasValue)
+                                        {
+                                            <span class="badge bg-light text-dark">(@match.HomePenaltyScore - @match.AwayPenaltyScore)</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(match.AwayTeam?.LogoUrl))
+                                        {
+                                            <img src="@match.AwayTeam.LogoUrl" alt="@match.AwayTeam.Name" class="team-logo me-2" style="width: 24px; height: 24px;" />
+                                        }
+                                        @match.AwayTeam?.Name
+                                    </div>
+                                </td>
+                                <td>@(match.Stadium ?? "-")</td>
+                                <td>@(match.Round ?? "-")</td>
+                                <td>@match.Tournament?.Name</td>
+                                <td>@match.Season?.Name</td>
+                                <td>
+                                    @{
+                                        string badgeClass = match.Status switch
+                                        {
+                                            MatchStatus.Scheduled => "bg-primary",
+                                            MatchStatus.InProgress => "bg-warning",
+                                            MatchStatus.HalfTime => "bg-info",
+                                            MatchStatus.ExtraTime => "bg-warning",
+                                            MatchStatus.Penalties => "bg-danger",
+                                            MatchStatus.Completed => "bg-success",
+                                            MatchStatus.Postponed => "bg-secondary",
+                                            MatchStatus.Cancelled => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@match.Status</span>
+                                </td>
+                                <td>
+                                    @if (match.Result.HasValue)
+                                    {
+                                        string resultBadgeClass = match.Result switch
+                                        {
+                                            MatchResult.HomeWin => "bg-info",
+                                            MatchResult.AwayWin => "bg-warning",
+                                            MatchResult.Draw => "bg-secondary",
+                                            MatchResult.Pending => "bg-light text-dark",
+                                            _ => "bg-light text-dark"
+                                        };
+
+                                        string resultText = match.Result switch
+                                        {
+                                            MatchResult.HomeWin => "Home Win",
+                                            MatchResult.AwayWin => "Away Win",
+                                            MatchResult.Draw => "Draw",
+                                            MatchResult.Pending => "Pending",
+                                            _ => match.Result.ToString()
+                                        };
+
+                                        <span class="badge @resultBadgeClass">@resultText</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@match.MatchId" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@match.MatchId" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit Match">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-controller="MatchEvent" asp-action="Create" asp-route-matchId="@match.MatchId" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Add Event">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@match.MatchId" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Delete Match">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Match Status and Result Legend</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <h6>Match Status</h6>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-primary">Scheduled</span> - Match is scheduled but not started
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-warning">In Progress</span> - Match is currently being played
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-info">Half Time</span> - Match is at half time
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-warning">Extra Time</span> - Match is in extra time
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-danger">Penalties</span> - Match is in penalty shootout
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-success">Completed</span> - Match has been completed
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-secondary">Postponed</span> - Match has been postponed
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-danger">Cancelled</span> - Match has been cancelled
+                    </div>
+
+                    <div class="col-md-12 mt-3 mb-2">
+                        <h6>Match Results</h6>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-info">Home Win</span> - Home team won the match
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-warning">Away Win</span> - Away team won the match
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-secondary">Draw</span> - Match ended in a draw
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <span class="badge bg-light text-dark">Pending</span> - Result not determined yet
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}
+
+

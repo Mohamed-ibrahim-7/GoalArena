@@ -7,46 +7,147 @@
 <h2>Create Match</h2>
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="MatchDate" class="form-label"></label>
-        <input asp-for="MatchDate" class="form-control" type="datetime-local" />
-        <span asp-validation-for="MatchDate" class="text-danger"></span>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Teams</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="HomeTeamId" class="form-label">Home Team</label>
+                        <select asp-for="HomeTeamId" class="form-select" asp-items="ViewBag.HomeTeams"></select>
+                        <span asp-validation-for="HomeTeamId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="AwayTeamId" class="form-label">Away Team</label>
+                        <select asp-for="AwayTeamId" class="form-select" asp-items="ViewBag.AwayTeams"></select>
+                        <span asp-validation-for="AwayTeamId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Match Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="MatchDate" class="form-label">Match Date</label>
+                        <input asp-for="MatchDate" type="date" class="form-control" />
+                        <span asp-validation-for="MatchDate" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="KickOffTime" class="form-label">Kick-off Time</label>
+                        <input asp-for="KickOffTime" type="time" class="form-control" />
+                        <span asp-validation-for="KickOffTime" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Stadium" class="form-label">Stadium</label>
+                        <input asp-for="Stadium" class="form-control" />
+                        <span asp-validation-for="Stadium" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Round" class="form-label">Round</label>
+                        <input asp-for="Round" class="form-control" />
+                        <span asp-validation-for="Round" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="EndTime" class="form-label">End Time</label>
+                        <input asp-for="EndTime" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Tournament & Season</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="TournamentId" class="form-label">Tournament</label>
+                        <select asp-for="TournamentId" class="form-select" asp-items="ViewBag.Tournaments"></select>
+                        <span asp-validation-for="TournamentId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="SeasonId" class="form-label">Season</label>
+                        <select asp-for="SeasonId" class="form-select" asp-items="ViewBag.Seasons"></select>
+                        <span asp-validation-for="SeasonId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Status & Result</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Match Status</label>
+                        <select asp-for="Status" class="form-select" asp-items="ViewBag.MatchStatuses"></select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Result" class="form-label">Match Result</label>
+                        <select asp-for="Result" class="form-select" asp-items="ViewBag.MatchResults"></select>
+                        <span asp-validation-for="Result" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Score</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="HomeScore" class="form-label">Home Score</label>
+                                <input asp-for="HomeScore" type="number" min="0" class="form-control" />
+                                <span asp-validation-for="HomeScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="AwayScore" class="form-label">Away Score</label>
+                                <input asp-for="AwayScore" type="number" min="0" class="form-control" />
+                                <span asp-validation-for="AwayScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="HomePenaltyScore" class="form-label">Home Penalty Score</label>
+                                <input asp-for="HomePenaltyScore" type="number" min="0" class="form-control" />
+                                <span asp-validation-for="HomePenaltyScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="AwayPenaltyScore" class="form-label">Away Penalty Score</label>
+                                <input asp-for="AwayPenaltyScore" type="number" min="0" class="form-control" />
+                                <span asp-validation-for="AwayPenaltyScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Stadium" class="form-label"></label>
-        <input asp-for="Stadium" class="form-control" />
-        <span asp-validation-for="Stadium" class="text-danger"></span>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
     </div>
-    <div class="mb-3">
-        <label for="HomeTeamId" class="form-label">Home Team</label>
-        <select asp-for="HomeTeamId" class="form-select" asp-items="ViewBag.HomeTeams"></select>
-        <span asp-validation-for="HomeTeamId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label for="AwayTeamId" class="form-label">Away Team</label>
-        <select asp-for="AwayTeamId" class="form-select" asp-items="ViewBag.AwayTeams"></select>
-        <span asp-validation-for="AwayTeamId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label for="SeasonId" class="form-label">Season</label>
-        <select asp-for="SeasonId" class="form-select" asp-items="ViewBag.Seasons"></select>
-        <span asp-validation-for="SeasonId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label for="TournamentId" class="form-label">Tournament</label>
-        <select asp-for="TournamentId" class="form-select" asp-items="ViewBag.Tournaments"></select>
-        <span asp-validation-for="TournamentId" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" class="form-select">
-            @foreach (var status in Enum.GetValues(typeof(GoalArena.Models.MatchStatus)))
-            {
-                <option value="@status">@status</option>
-            }
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
