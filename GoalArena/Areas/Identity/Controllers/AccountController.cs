@@ -5,7 +5,6 @@ using GoalArena.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace GoalArena.Areas.Identity.Controllers
@@ -150,33 +149,20 @@ namespace GoalArena.Areas.Identity.Controllers
         public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM)
         {
             if (!ModelState.IsValid)
+            {
                 return View(resendEmailConfirmationVM);
-
-            ApplicationUser user = null;
-
-            // Check if input is email or username
-            if (resendEmailConfirmationVM.EmailORUserName.Contains("@"))
-            {
-                // Avoid "Sequence contains more than one element"
-                user = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.Email == resendEmailConfirmationVM.EmailORUserName);
-            }
-            else
-            {
-                user = await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailORUserName);
             }
 
-            if (user != null)
+            var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.EmailORUserName) ?? await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailORUserName);
+
+            if (user is not null)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var link = Url.Action(nameof(ConfirmEmail), "Account",
-                    new { area = "Identity", token = token, userId = user.Id },
-                    Request.Scheme);
-
-                await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Account",
-                    $"<h1>Confirm Your Account By Clicking <a href='{link}'>Here</a></h1>");
+                var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = "Identity", token = token, userId = user.Id }, Request.Scheme);
+                await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Account", $"<h1>Confirm Your Account By Clicking <a href='{link}'>Here</a></h1>");
             }
 
+            // Send msg
             TempData["success-notification"] = "Confirm Your Account Again!";
             return RedirectToAction(nameof(Index), "Home", new { area = "Customer" });
         }
@@ -192,50 +178,38 @@ namespace GoalArena.Areas.Identity.Controllers
             {
                 return View(forgetPasswordVM);
             }
-
-            var user = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.Email == forgetPasswordVM.EmailORUserName)
-                ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailORUserName);
-
-            if (user == null)
-            {
-                TempData["error-notification"] = "User not found";
-                return View(forgetPasswordVM);
-            }
+            var user = await _userManager.FindByEmailAsync(forgetPasswordVM.EmailORUserName) ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailORUserName);
 
             var userOTP = await _userOTPRepository.GetAsync(e => e.ApplicationUserId == user.Id);
 
-            var totalOTPs = userOTP.Count(e =>
-                e.Date.Day == DateTime.UtcNow.Day &&
-                e.Date.Month == DateTime.UtcNow.Month &&
-                e.Date.Year == DateTime.UtcNow.Year);
+            var totalOTPs = userOTP.Count(e => (e.Date.Day == DateTime.UtcNow.Day) && (e.Date.Month == DateTime.UtcNow.Month) && (e.Date.Year == DateTime.UtcNow.Year));
 
             if (totalOTPs < 3)
             {
-                var OTPNumber = new Random().Next(1000, 9999);
-
-                await _emailSender.SendEmailAsync(
-                    user.Email!,
-                    "Reset Password",
-                    $"<h1>Reset Password Using OTP Number {OTPNumber}</h1>"
-                );
-
-                await _userOTPRepository.CreateAsync(new()
+                if (user is not null)
                 {
-                    Code = OTPNumber.ToString(),
-                    Date = DateTime.UtcNow,
-                    ExpirationDate = DateTime.UtcNow.AddHours(1),
-                    ApplicationUserId = user.Id
-                });
-                await _userOTPRepository.CommitAsync();
+                    var OTPNumber = new Random().Next(1000, 9999);
+                    await _emailSender.SendEmailAsync(user.Email!, "Reset Password", $"<h1>Reset Password Using OTP Number {OTPNumber}</h1>");
+
+                    await _userOTPRepository.CreateAsync(new()
+                    {
+                        Code = OTPNumber.ToString(),
+                        Date = DateTime.UtcNow,
+                        ExpirationDate = DateTime.UtcNow.AddHours(1),
+                        ApplicationUserId = user.Id
+                    });
+                    await _userOTPRepository.CommitAsync();
+                }
 
                 TempData["RedirectToAction"] = Guid.NewGuid().ToString();
-                return RedirectToAction(nameof(ResetPassword), new { userId = user.Id });
+                return RedirectToAction(nameof(ResetPassword), new { userId = user.Id! });
             }
 
-            TempData["error-notification"] = "Too Many Requests, Please try again later";
+            // Send msg
+            TempData["error-notification"] = "Too Many Request, Please try again Later";
             return View(forgetPasswordVM);
         }
+
 
         public IActionResult ResetPassword(string userId)
         {
@@ -320,15 +294,8 @@ namespace GoalArena.Areas.Identity.Controllers
             };
             return View(model);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
-        {
-            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
-        }
         [HttpGet]
+
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
             if (remoteError != null)
@@ -343,28 +310,29 @@ namespace GoalArena.Areas.Identity.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
+            // Try signing in with an external login
             var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (signInResult.Succeeded)
             {
                 return LocalRedirect(returnUrl ?? "/");
             }
 
+            // If the user cannot log in, try finding them by email
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             var name = info.Principal.FindFirstValue(ClaimTypes.Name);
-
             if (email != null)
             {
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
+                    // Create a new user if they do not exist
                     user = new ApplicationUser
                     {
                         UserName = name.Replace(" ", ""),
                         Email = email,
-                        LastName = name,
-                        FirstName = string.Empty
+                        FirstName = name,
+                        LastName = String.Empty
                     };
-
                     var createUserResult = await _userManager.CreateAsync(user);
                     if (!createUserResult.Succeeded)
                     {
@@ -373,8 +341,11 @@ namespace GoalArena.Areas.Identity.Controllers
                     }
                 }
 
+                // Ensure the external login is linked
                 var existingLogins = await _userManager.GetLoginsAsync(user);
-                if (!existingLogins.Any(l => l.LoginProvider == info.LoginProvider))
+                var hasGoogleLogin = existingLogins.Any(l => l.LoginProvider == info.LoginProvider);
+
+                if (!hasGoogleLogin)
                 {
                     var addLoginResult = await _userManager.AddLoginAsync(user, info);
                     if (!addLoginResult.Succeeded)
@@ -384,12 +355,7 @@ namespace GoalArena.Areas.Identity.Controllers
                     }
                 }
 
-                var claims = await _userManager.GetClaimsAsync(user);
-                if (!claims.Any(c => c.Type == ClaimTypes.Name))
-                {
-                    await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Name, name));
-                }
-
+                // Sign in the user
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return LocalRedirect(returnUrl ?? "/");
             }

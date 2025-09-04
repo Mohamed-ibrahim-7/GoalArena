@@ -1,6 +1,7 @@
 ﻿using GoalArena.Models;
-
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -18,12 +19,13 @@ namespace GoalArena.Areas.Admin.Controllers
             _playerRepository = playerRepository;
             _teamRepository = teamRepository;
         }
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
             var players =await _playerRepository.GetAsync(includes: [e => e.Team!]);
             return View(players);
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Details(int id)
         {
             var players =await _playerRepository.GetOneAsync(e => e.PlayerId == id,includes: [e => e.Team!]);
@@ -34,6 +36,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create()
         {
             var teams = await _teamRepository.GetAsync();
@@ -47,6 +50,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create(Player player)
         {
            
@@ -89,6 +93,7 @@ namespace GoalArena.Areas.Admin.Controllers
         
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var player = await _playerRepository.GetOneAsync(e => e.PlayerId == id, includes: [e => e.Team!]);
@@ -104,6 +109,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(Player player)
         {
             if (!ModelState.IsValid)
@@ -146,6 +152,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var player = await _playerRepository.GetOneAsync(e => e.PlayerId == id, includes: [e => e.Team!]);
@@ -155,6 +162,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var player = await _playerRepository.GetOneAsync(e => e.PlayerId == id);

@@ -1,5 +1,7 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoalArena.Areas.Admin.Controllers
@@ -14,14 +16,14 @@ namespace GoalArena.Areas.Admin.Controllers
             _tournamentRepository = tournamentRepository;
         }
 
-    
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
             var tournaments = await _tournamentRepository.GetAsync();
             return View(tournaments);
         }
 
-      
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Details(int id)
         {
             var tournament = await _tournamentRepository.GetOneAsync(t => t.TournamentId == id);
@@ -34,13 +36,13 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(tournament);
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public IActionResult Create()
         {
             return View();
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Tournament tournament)
@@ -74,7 +76,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(tournament);
         }
 
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var tournament = await _tournamentRepository.GetOneAsync(t => t.TournamentId == id);
@@ -90,6 +92,7 @@ namespace GoalArena.Areas.Admin.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id, Tournament tournament)
         {
             if (id != tournament.TournamentId)
@@ -140,7 +143,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var tournament = await _tournamentRepository.GetOneAsync(t => t.TournamentId == id);
@@ -156,6 +159,7 @@ namespace GoalArena.Areas.Admin.Controllers
         
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tournament = await _tournamentRepository.GetOneAsync(t => t.TournamentId == id);

@@ -1,5 +1,7 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -27,14 +29,14 @@ namespace GoalArena.Areas.Admin.Controllers
             _tournamentRepository = tournamentRepository;
             _matchEventRepository = matchEventRepository;
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
             var matches = await _matchRepository.GetAsync(
                 includes: [m => m.HomeTeam, m => m.AwayTeam, m => m.Season, m => m.Tournament, m => m.MatchEvents]);
             return View(matches);
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Details(int id)
         {
             var match = await _matchRepository.GetOneAsync(
@@ -70,6 +72,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create()
         {
             var teams = await _teamRepository.GetAsync();
@@ -131,6 +134,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var match = await _matchRepository.GetOneAsync(
@@ -164,6 +168,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id, Match match)
         {
             if (id != match.MatchId) return NotFound();
@@ -198,7 +203,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
             return View(match);
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var match = await _matchRepository.GetOneAsync(

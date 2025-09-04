@@ -1,5 +1,7 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
@@ -18,21 +20,21 @@ namespace GoalArena.Areas.Admin.Controllers
             _seasonRepository = seasonRepository;
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
             var teams = await _teamRepository.GetAsync(null, new Expression<Func<Team, object>>[] { t => t.Season }); return View(teams);
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Details(int id)
         {
             var team = await _teamRepository.GetOneAsync(t => t.Id == id,new Expression<Func<Team, object>>[] { t => t.Season });
             if (team == null) return NotFound();
             return View(team);
         }
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
 
-        
         public async Task<IActionResult> Create()
         {
             var seasons = await _seasonRepository.GetAsync();
@@ -47,6 +49,7 @@ namespace GoalArena.Areas.Admin.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create(Team team)
         {
             if (ModelState.IsValid)
@@ -85,7 +88,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(team);
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var team = await _teamRepository.GetOneAsync(t => t.Id == id, new Expression<Func<Team, object>>[] { t => t.Season }); if (team == null) return NotFound();
@@ -102,6 +105,7 @@ namespace GoalArena.Areas.Admin.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id, Team team)
         {
             if (id != team.Id) return NotFound();
@@ -155,7 +159,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(team);
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             
@@ -165,7 +169,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(team);
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

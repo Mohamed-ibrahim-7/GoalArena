@@ -1,5 +1,7 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -25,7 +27,7 @@ namespace GoalArena.Areas.Admin.Controllers
             _playerRepository = playerRepository;
         }
 
-        
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index(int? matchId)
         {
             IEnumerable<MatchEvent> events;
@@ -57,7 +59,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(events);
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create(int matchId)
         {
             var match = await _matchRepository.GetOneAsync(
@@ -102,6 +104,7 @@ namespace GoalArena.Areas.Admin.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create(MatchEvent matchEvent)
         {
             if (ModelState.IsValid)
@@ -152,7 +155,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(matchEvent);
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var matchEvent = await _matchEventRepository.GetOneAsync(e => e.Id == id);
@@ -198,6 +201,7 @@ namespace GoalArena.Areas.Admin.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(int id, MatchEvent matchEvent)
         {
             if (id != matchEvent.Id) return NotFound();
@@ -263,7 +267,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return View(matchEvent);
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var matchEvent = await _matchEventRepository.GetOneAsync(
@@ -294,7 +298,7 @@ namespace GoalArena.Areas.Admin.Controllers
             return RedirectToAction("Details", "Match", new { id = matchId });
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         private async Task UpdateMatchBasedOnEvent(MatchEvent matchEvent)
         {
           
@@ -367,7 +371,7 @@ namespace GoalArena.Areas.Admin.Controllers
             }
         }
 
-       
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         private async Task RevertMatchEventEffect(MatchEvent matchEvent)
         {
             var match = await _matchRepository.GetOneAsync(m => m.MatchId == matchEvent.MatchId);
