@@ -1,4 +1,5 @@
-﻿@model IEnumerable<GoalArena.Models.MatchEvent>
+﻿@using GoalArena.Utility
+@model IEnumerable<GoalArena.Models.MatchEvent>
 
 @{
     ViewData["Title"] = ViewBag.MatchName != null ? $"Events for {ViewBag.MatchName}" : "Match Events";
@@ -77,8 +78,10 @@ else
                                 <td>@item.Team?.Name</td>
                                 <td>@item.Player?.Name</td>
                                 <td>@item.Description</td>
-                                <td>
-                                    <div class="btn-group">
+                                @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
+                                {
+                                    <td>
+                                        <div class="btn-group">
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -86,7 +89,7 @@ else
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
-                                </td>
+                                </td>}
                             </tr>
                         }
                     </tbody>

@@ -363,6 +363,10 @@ namespace GoalArena.Areas.Identity.Controllers
             return RedirectToAction(nameof(Login));
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
     }
 }

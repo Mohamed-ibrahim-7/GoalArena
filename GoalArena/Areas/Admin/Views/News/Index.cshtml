@@ -1,85 +1,67 @@
-﻿@model IEnumerable<News>
+﻿@using GoalArena.Utility
+@model IEnumerable<News>
 @{
     ViewData["Title"] = "News";
     @*  Layout = "~/Views/Shared/_Layout.cshtml";*@
 }
-<div class="container">
-    <div class="row mb-3 align-items-center my-3">
-        <div class="col-md-6">
-            <h2 class="display-6">All News</h2>
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Team List</h2>
         </div>
-        <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
-            <a href="/Admin/News/Create" class="btn btn-success">Create</a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Content</th>
-                        <th scope="col">PublishedDate</th>
-                        <th scope="col">Match</th>
-                        <th scope="col">Player </th>
-                        <th scope="col">Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <th scope="row">@item.Id</th>
-                            <td>@item.Title</td>
-                            <td>@item.Content</td>
-                            <td>@item.PublishedDate</td>
-                            <td>@item.Match.Result</td>
-                            <td>@item.Player.Name</td>
-                            <td>@item.Team.Name</td>
-                           
-                            <td>
-                                <a href="/Admin/News/Details/@item.Id" type="button" class="btn btn-info">Details</a>
-                                <a href="/Admin/News/Edit?Id=@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/Admin/News/Delete/@item.Id"
-                                   class="btn btn-danger btn-delete"
-                                   data-id="@item.Id">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="col-6 text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New Team
+            </a>
         </div>
     </div>
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>PublishedDate</th>
+                <th>ImageNews</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.Title</td>
+                    <td>@obj.Content</td>
+                    <td>@(obj.PublishedDate != null ? obj.PublishedDate.ToString("dd/MM/yyyy") : "N/A")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(obj.ImageNews))
+                        {
+                            <img src="@obj.ImageNews" style="width:50px; height:50px;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+
+                    
+                        @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
+                        {<td>
+                            <div class="w-75 btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+						</td>
+					}
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const deleteButtons = document.querySelectorAll('.btn-delete');
-
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                const deleteUrl = this.getAttribute('href');
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = deleteUrl;
-                    }
-                });
-            });
-        });
-    });
-</script>
-
