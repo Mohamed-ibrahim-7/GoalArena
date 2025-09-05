@@ -1,10 +1,13 @@
 ﻿using GoalArena.Data;
+using GoalArena.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoalArena.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =$"{SD.SuperAdmin},{SD.Admin}")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,9 +27,9 @@ namespace GoalArena.Areas.Admin.Controllers
 
             var standings = _context.TeamSeasons
         .Include(ts => ts.Team)
-        .ToList() // نجيب كل البيانات (لأن عندك سيزون واحد بس)
+        .ToList() 
         .OrderByDescending(ts => ts.Points)
-        .ThenByDescending(ts => ts.GoalsFor - ts.GoalsAgainst) // فارق الأهداف
+        .ThenByDescending(ts => ts.GoalsFor - ts.GoalsAgainst) 
         .ThenByDescending(ts => ts.GoalsFor)
         .ToList();
 

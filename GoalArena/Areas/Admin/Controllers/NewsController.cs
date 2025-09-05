@@ -1,6 +1,8 @@
 ﻿using GoalArena.Models;
 using GoalArena.Repositories.IRepositories;
+using GoalArena.Utility;
 using GoalArena.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -23,7 +25,7 @@ namespace GoalArena.Areas.Admin.Controllers
             _playerRepository = playerRepository;
             _teamRepository = teamRepository;
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
             var news = await _newsRepository.GetAsync(includes: [e =>e.Match , e =>e.Player , e=>e.Team]);
@@ -31,6 +33,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create()
         {
             var players = await _playerRepository.GetAsync();
@@ -59,6 +62,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Create(News news,IFormFile imageUrl)
         {
             if (!ModelState.IsValid)
@@ -112,6 +116,7 @@ namespace GoalArena.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var news = await _newsRepository.GetOneAsync(e => e.Id == id);
@@ -149,6 +154,7 @@ namespace GoalArena.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Edit(News news)
         {
             var newsInDB = await _newsRepository.GetOneAsync(e => e.Id == news.Id, tracked: false);
@@ -184,7 +190,7 @@ namespace GoalArena.Areas.Admin.Controllers
             }
             return NotFound();
         }
-
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var news = await _newsRepository.GetOneAsync(e => e.Id == id);
