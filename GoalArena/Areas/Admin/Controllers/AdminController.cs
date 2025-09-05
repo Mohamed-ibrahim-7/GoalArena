@@ -8,6 +8,7 @@ namespace GoalArena.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles =$"{SD.SuperAdmin},{SD.Admin}")]
+    
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
