@@ -20,9 +20,21 @@ namespace GoalArena.Areas.Admin.Controllers
             _teamRepository = teamRepository;
         }
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 30)
         {
-            var players =await _playerRepository.GetAsync(includes: [e => e.Team!]);
+            var query = await _playerRepository.GetAsync(includes: [e => e.Team!]);
+
+            var totalCount = query.Count(); 
+            var players = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalCount = totalCount;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
             return View(players);
         }
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
