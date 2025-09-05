@@ -35,8 +35,6 @@
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\images\teams\" />
-    <Folder Include="wwwroot\images\Player\" />
     <Folder Include="wwwroot\images\tournaments\" />
     <Folder Include="wwwroot\uploads\players\" />
   </ItemGroup>
