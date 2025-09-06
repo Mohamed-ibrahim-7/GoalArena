@@ -261,7 +261,7 @@ namespace GoalArena.Areas.Identity.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordVM changePasswordVM)
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM changePasswordVM, UserProfileVM userProfileVM)
         {
             if (!ModelState.IsValid)
             {
@@ -290,7 +290,7 @@ namespace GoalArena.Areas.Identity.Controllers
             {
                 UserName = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value,
                 Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value
-              
+
             };
             return View(model);
         }
@@ -367,6 +367,9 @@ namespace GoalArena.Areas.Identity.Controllers
         {
             return View();
         }
+        
 
     }
 }
+
+

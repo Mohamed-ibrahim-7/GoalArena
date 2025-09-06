@@ -1,73 +1,64 @@
-﻿@using GoalArena.ViewModels
-@model UserProfileVM
+﻿@model GoalArena.ViewModels.UserProfileVM
 
-<style>
-    /* الخلفية الشفافة */
-    .profile-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.4);
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-end;
-        padding: 80px 20px 20px 20px;
-        z-index: 1050;
-    }
+<section class="vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-5">
 
-    /* الكارد نفسه */
-    .profile-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        width: 320px;
-        padding: 20px;
-        /* الانيميشن بالـ transition */
-        opacity: 0;
-        transform: translateY(-20px);
-        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-    }
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body text-center p-5">
 
-        /* لما الصفحة تخلص تحميل */
-        .profile-card.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+                        <!-- صورة البروفايل -->
+                        <div class="mb-4">
+                            <img src="@(!string.IsNullOrEmpty(Model.ProfileImageUrl) ? Model.ProfileImageUrl : "https://via.placeholder.com/150")"
+                                 alt="Profile Picture"
+                                 class="rounded-circle img-fluid shadow-sm border"
+                                 style="width: 120px; height: 120px; object-fit: cover;" />
+                        </div>
 
-    /* زرار الإغلاق */
-    .profile-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: transparent;
-        border: none;
-        font-size: 22px;
-        cursor: pointer;
-    }
-</style>
+                        <!-- اسم المستخدم -->
+                        <h3 class="mb-2 fw-bold">@Model.UserName</h3>
 
-<!-- البروفايل -->
-<div class="profile-overlay" id="profileOverlay">
-    <div class="profile-card text-center" id="profileCard">
-        <button class="profile-close" onclick="goHome()">×</button>
+                        <!-- الإيميل -->
+                        <p class="text-muted mb-4">@Model.Email</p>
 
-        <img src="~/images/default-profile.png" class="rounded-circle mb-3" width="80" />
-        <h4 class="fw-bold">@Model?.UserName</h4>
-        <p class="text-muted">@Model?.Email</p>
-        <hr />
+                        <!-- زر تعديل البروفايل -->
+                       
+
+                        <!-- زر تغيير الباسورد -->
+                       
+                        <div class="card-body p-5">
+                            <h3 class="text-center fw-bold mb-4">Change Password</h3>
+
+                            <form asp-action="ChangePassword">
+                                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                                <input type="hidden" name="UserId" value="@Model.UserId" />
+
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label"></label>
+                                    <input asp-for="Password" class="form-control" type="password" placeholder="Enter new password" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                                    <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Confirm new password" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg rounded-pill">Update Password</button>
+                                </div>
+                            </form>
+
+                            <div class="text-center mt-3">
+                                <a asp-action="Index" class="text-decoration-none">Back to List</a>
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-</div>
-
-<script>
-    // أول ما الصفحة تخلص تحميل نضيف الكلاس show علشان يشتغل transition
-    window.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("profileCard").classList.add("show");
-    });
-
-    // رجوع للـ Home لما تدوس ×
-    function goHome(){
-        window.location.href = "/";
-    }
-</script>
+</section>
