@@ -28,43 +28,36 @@ namespace GoalArena
             {
                 options.Password.RequireNonAlphanumeric = false;
                 options.SignIn.RequireConfirmedEmail = true;
-            })
+            }) .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-                  .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-            // login by Google
-            builder.Services.AddAuthentication().AddGoogle("google", opt =>
+            //login by google
+
+            builder.Services.AddAuthentication()
+            .AddGoogle("google", opt =>
             {
                 var googleAuth = builder.Configuration.GetSection("Authentication:Google");
                 opt.ClientId = googleAuth["ClientId"] ?? " ";
                 opt.ClientSecret = googleAuth["ClientSecret"] ?? " ";
                 opt.SignInScheme = IdentityConstants.ExternalScheme;
-
-                // ????? ????? ?????? ?????? ??????
-                opt.Events.OnRedirectToAuthorizationEndpoint = context =>
-                {
-                    context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
-                    return Task.CompletedTask;
-                };
             });
-            // login by Facebook
+            // login by facebook
+
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
-                facebookOptions.AppId = builder.Configuration["FaceBook:AppId"?? string.Empty];
-                facebookOptions.AppSecret = builder.Configuration["FaceBook:AppSecret"?? string.Empty];
-                facebookOptions.CallbackPath = "/signin-facebook";
-                facebookOptions.SignInScheme = IdentityConstants.ExternalScheme;
-
+                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"] ?? " ";
+                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ?? " ";
             });
 
-            // 3. Configure authentication cookies
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+
+            builder.Services.AddAuthorization();
+
+
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-
-
             builder.Services.AddScoped<ImatchRepository, MatchRepository>();   
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
@@ -80,6 +73,8 @@ namespace GoalArena
 
             var app = builder.Build();
 
+           
+
             // Configure the HTTP request pipelinez      ccccccccv bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
             if (!app.Environment.IsDevelopment())
             {
@@ -88,14 +83,8 @@ namespace GoalArena
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
-
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
-                dbInitializer.Initialize();
-            }
 
             app.UseRouting();
             app.UseAuthentication();
@@ -106,6 +95,14 @@ namespace GoalArena
                  name: "default",
                  pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                  .WithStaticAssets();
+
+
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+                dbInitializer.Initialize();
+            }
 
             app.Run();
 
