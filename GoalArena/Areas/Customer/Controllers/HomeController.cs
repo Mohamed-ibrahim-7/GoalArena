@@ -1,6 +1,7 @@
 ﻿using GoalArena.Data;
 using GoalArena.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace GoalArena.Controllers
@@ -39,7 +40,13 @@ namespace GoalArena.Controllers
             ViewBag.News = news;
             ViewBag.CurrentFilter = dateFilter;
             ViewBag.FilterDate = filterDate;
-
+            var topScorers = _context.Players
+                  .Where(p => p.Goals > 0)
+                  .Include(p => p.Team)
+                  .OrderByDescending(p => p.Goals)   
+                   .Take(5)                           
+                   .ToList();
+            ViewBag.TopScorers = topScorers;
             return View();
         }
 
