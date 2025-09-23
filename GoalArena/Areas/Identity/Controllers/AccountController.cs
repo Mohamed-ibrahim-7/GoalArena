@@ -282,18 +282,30 @@ namespace GoalArena.Areas.Identity.Controllers
 
             return NotFound();
         }
-        public IActionResult UserProfile()
+        public async Task<IActionResult> UserProfile()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
 
             var model = new UserProfileVM
             {
                 UserName = claimsIdentity.FindFirst(ClaimTypes.Name)?.Value,
-                Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value
-
+                Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value,
+                UserId = claimsIdentity.FindFirst("UserId")?.Value,
+                ProfilePicture = claimsIdentity.FindFirst("ProfilePicture")?.Value ?? "https://via.placeholder.com/150"
             };
+
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
         [HttpGet]
 
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -362,6 +374,7 @@ namespace GoalArena.Areas.Identity.Controllers
 
             return RedirectToAction(nameof(Login));
         }
+    
 
         public IActionResult AccessDenied()
         {
