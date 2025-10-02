@@ -22,9 +22,9 @@
             <tr>
                 <th>Title</th>
                 <th>Content</th>
-                <th>Published Date</th>
-                <th>Image</th>
-                <th></th>
+                <th>PublishedDate</th>
+                <th>ImageNews</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -44,9 +44,10 @@
                             <span>No Image</span>
                         }
                     </td>
-                    @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
-                    {
-                        <td>
+
+                    
+                        @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
+                        {<td>
                             <div class="w-75 btn-group" role="group">
                                 <a asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
                                     <i class="bi bi-pencil-square"></i> Edit
