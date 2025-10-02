@@ -5,8 +5,6 @@ using GoalArena.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.Threading.Tasks;
 
 namespace GoalArena.Areas.Admin.Controllers
 {
@@ -18,17 +16,24 @@ namespace GoalArena.Areas.Admin.Controllers
         private readonly ITeamRepository _teamRepository;
         private readonly ImatchRepository _matchRepository;
 
-        public NewsController(InewsRepository newsRepository , IPlayerRepository playerRepository , ITeamRepository teamRepository , ImatchRepository matchRepository)
+        public NewsController(InewsRepository newsRepository, IPlayerRepository playerRepository, ITeamRepository teamRepository, ImatchRepository matchRepository)
         {
             _newsRepository = newsRepository;
             _matchRepository = matchRepository;
             _playerRepository = playerRepository;
             _teamRepository = teamRepository;
         }
+
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
         public async Task<IActionResult> Index()
         {
-            var news = await _newsRepository.GetAsync(includes: [e =>e.Match , e =>e.Player , e=>e.Team]);
+            var news = await _newsRepository.GetAsync(
+                includes: new System.Linq.Expressions.Expression<Func<News, object>>[]
+                {
+                    e => e.Match,
+                    e => e.Player,
+                    e => e.Team
+                });
             return View(news);
         }
 
@@ -39,7 +44,7 @@ namespace GoalArena.Areas.Admin.Controllers
             var players = await _playerRepository.GetAsync();
             var teams = await _teamRepository.GetAsync();
             var matches = await _matchRepository.GetAsync();
-            MatchWithPlayerWithTeamVM  matchWithPlayerWithTeamVM=new()
+            MatchWithPlayerWithTeamVM matchWithPlayerWithTeamVM = new()
             {
                 Players = players.Select(e => new SelectListItem()
                 {
@@ -56,14 +61,14 @@ namespace GoalArena.Areas.Admin.Controllers
                     Text = e.MatchDate.ToString("yyyy-MM-dd"),
                     Value = e.MatchId.ToString()
                 }).ToList(),
-                News= new()
+                News = new()
             };
             return View(matchWithPlayerWithTeamVM);
         }
 
         [HttpPost]
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
-        public async Task<IActionResult> Create(News news,IFormFile imageUrl)
+        public async Task<IActionResult> Create(News news, IFormFile imageUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -87,32 +92,28 @@ namespace GoalArena.Areas.Admin.Controllers
                         Text = e.MatchDate.ToString("yyyy-MM-dd"),
                         Value = e.MatchId.ToString()
                     }).ToList(),
-                    News = new()
+                    News = news
                 };
                 return View(matchWithPlayerWithTeamVM);
             }
-          if (imageUrl is not null && imageUrl.Length > 0)
-          {
-              var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageUrl.FileName);
-              var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", fileName);
-          
-              // Save img in wwwroot
-              using (var stream = System.IO.File.Create(filePath))
-              {
-                  imageUrl.CopyTo(stream);
-              }
+            if (imageUrl is not null && imageUrl.Length > 0)
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageUrl.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", fileName);
 
-                // Save img in DB
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    imageUrl.CopyTo(stream);
+                }
+
                 news.ImageNews = fileName;
-          
-              // Save product in DB
-              await _newsRepository.CreateAsync(news);
-              await _matchRepository.CommitAsync();
-          
-              return RedirectToAction(nameof(Index));
-          }
-            return BadRequest();
 
+                await _newsRepository.CreateAsync(news);
+                await _newsRepository.CommitAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return BadRequest();
         }
 
         [HttpGet]
@@ -122,7 +123,6 @@ namespace GoalArena.Areas.Admin.Controllers
             var news = await _newsRepository.GetOneAsync(e => e.Id == id);
             if (news is not null)
             {
-
                 var players = await _playerRepository.GetAsync();
                 var teams = await _teamRepository.GetAsync();
                 var matches = await _matchRepository.GetAsync();
@@ -143,19 +143,18 @@ namespace GoalArena.Areas.Admin.Controllers
                         Text = e.MatchDate.ToString("yyyy-MM-dd"),
                         Value = e.MatchId.ToString()
                     }).ToList(),
-                    News = new()
+                    News = news
                 };
 
                 return View(matchWithPlayerWithTeamVM);
             }
             return RedirectToAction("NotFoundPage", "Home");
-
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
-        public async Task<IActionResult> Edit(News news)
+        public async Task<IActionResult> Edit(News news, IFormFile? imageUrl)
         {
             var newsInDB = await _newsRepository.GetOneAsync(e => e.Id == news.Id, tracked: false);
             if (newsInDB is not null)
@@ -182,14 +181,37 @@ namespace GoalArena.Areas.Admin.Controllers
                             Text = e.MatchDate.ToString("yyyy-MM-dd"),
                             Value = e.MatchId.ToString()
                         }).ToList(),
-                        News = new()
+                        News = news
                     };
 
                     return View(matchWithPlayerWithTeamVM);
                 }
+
+                if (imageUrl is not null && imageUrl.Length > 0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageUrl.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", fileName);
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        imageUrl.CopyTo(stream);
+                    }
+
+                    news.ImageNews = fileName;
+                }
+                else
+                {
+                    news.ImageNews = newsInDB.ImageNews;
+                }
+
+                _newsRepository.Edit(news);
+                await _newsRepository.CommitAsync();
+
+                return RedirectToAction(nameof(Index));
             }
             return NotFound();
         }
+
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -197,9 +219,8 @@ namespace GoalArena.Areas.Admin.Controllers
 
             if (news is not null)
             {
-                
                 _newsRepository.Delete(news);
-                await _matchRepository.CommitAsync();
+                await _newsRepository.CommitAsync();
 
                 return RedirectToAction(nameof(Index));
             }

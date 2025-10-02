@@ -2,16 +2,16 @@
 @model IEnumerable<News>
 @{
     ViewData["Title"] = "News";
-    @*  Layout = "~/Views/Shared/_Layout.cshtml";*@
 }
+
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Team List</h2>
+            <h2 class="text-primary">News List</h2>
         </div>
         <div class="col-6 text-end">
             <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Team
+                <i class="bi bi-plus-circle"></i> &nbsp; Create New News
             </a>
         </div>
     </div>
@@ -22,9 +22,9 @@
             <tr>
                 <th>Title</th>
                 <th>Content</th>
-                <th>PublishedDate</th>
-                <th>ImageNews</th>
-                
+                <th>Published Date</th>
+                <th>Image</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -37,29 +37,26 @@
                     <td>
                         @if (!string.IsNullOrEmpty(obj.ImageNews))
                         {
-                            <img src="@obj.ImageNews" style="width:50px; height:50px;" />
+                            <img src="~/Images/@obj.ImageNews" style="width:50px; height:50px;" />
                         }
                         else
                         {
                             <span>No Image</span>
                         }
                     </td>
-
-                    
-                        @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
-                        {<td>
+                    @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))
+                    {
+                        <td>
                             <div class="w-75 btn-group" role="group">
                                 <a asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
-
                                 <a asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
                                     <i class="bi bi-trash"></i> Delete
                                 </a>
                             </div>
-						</td>
-					}
-                    
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

@@ -18,6 +18,7 @@
                     <input type="text" class="form-control" id="name" name="News.Title" value="@Model.News!.Title">
                     <span class="text-danger" asp-validation-for="News.Title"></span>
                 </div>
+
                 <div class="mb-3">
                     <label for="Content" class="form-label">Content</label>
                     <div class="form-floating">
@@ -26,11 +27,11 @@
                     </div>
                     <span class="text-danger" asp-validation-for="News.Content"></span>
                 </div>
+
                 <div class="mb-3">
                     <label for="imageUrl" class="form-label">ImageUrl</label>
                     <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*" onchange="previewImage(event)">
 
-                    <!-- Show current image if exists -->
                     @if (!string.IsNullOrEmpty(Model.News.ImageNews))
                     {
                         <img id="imagePreview" src="~/images/@Model.News.ImageNews" class="img-thumbnail mt-2" style="max-height: 200px;" />
@@ -40,75 +41,34 @@
                         <img id="imagePreview" src="#" class="img-thumbnail mt-2" style="display:none; max-height: 200px;" />
                     }
 
-                    <!-- Hidden input to keep the old image if not changed -->
-                    <input type="hidden" name="News.OldImageUrl" value="~/images/@Model.News.ImageNews" />
+                    <input type="hidden" name="News.ImageNews" value="@Model.News.ImageNews" />
                     <span class="text-danger" asp-validation-for="News.ImageNews"></span>
                 </div>
+
                 <div class="mb-3">
                     <label asp-for="News.PublishedDate" class="form-label"></label>
                     <input asp-for="News.PublishedDate" class="form-control" type="datetime-local" />
                     <span class="text-danger" asp-validation-for="News.PublishedDate"></span>
                 </div>
 
-               
                 <div class="mb-3">
-                    <label for="PlayerId" class="form-label">PlayerId</label>
-                    @* <input type="number" class="form-control" id="CategoryId" name="Product.CategoryId" value="@Model.Product!.CategoryId"> *@
-                    @* <select name="Product.CategoryId" class="form-select"> *@
-                    @*     @foreach (var item in Model.Categories) *@
-                    @*     { *@
-                    @*         @if(item.Id == Model.Product.CategoryId) *@
-                    @*         { *@
-                    @*             <option value="@item.Id" selected>@item.Name</option> *@
-                    @*         } *@
-                    @*         else *@
-                    @*         { *@
-                    @*             <option value="@item.Id">@item.Name</option> *@
-                    @*         } *@
-                    @*     } *@
-                    @* </select> *@
+                    <label for="PlayerId" class="form-label">Player</label>
                     <select class="form-select" asp-for="News.playerId" asp-items="Model.Players"></select>
-
                     <span class="text-danger" asp-validation-for="News.playerId"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label for="TeamId" class="form-label">TeamId</label>
-                    @* <input type="number" class="form-control" id="BrandId" name="Product.BrandId" value="@Model.Product!.BrandId"> *@
-                    @* <select name="Product.BrandId" class="form-select"> *@
-                    @*     @foreach (var item in Model.Brands) *@
-                    @*     { *@
-                    @*         @if (item.Id == Model.Product.BrandId) *@
-                    @*         { *@
-                    @*             <option value="@item.Id" selected>@item.Name</option> *@
-                    @*         } *@
-                    @*         else *@
-                    @*         { *@
-                    @*             <option value="@item.Id">@item.Name</option> *@
-                    @*         } *@
-                    @*     } *@
-                    @* </select> *@
-                    <select class="form-select" asp-for="News.playerId" asp-items="Model.Teams"></select>
+                    <label for="TeamId" class="form-label">Team</label>
+                    <select class="form-select" asp-for="News.TeamId" asp-items="Model.Teams"></select>
                     <span class="text-danger" asp-validation-for="News.TeamId"></span>
-                 <div class="mb-3">
-                    <label for="MatchId" class="form-label">MatchId</label>
-                    @* <input type="number" class="form-control" id="BrandId" name="Product.BrandId" value="@Model.Product!.BrandId"> *@
-                    @* <select name="Product.BrandId" class="form-select"> *@
-                    @*     @foreach (var item in Model.Brands) *@
-                    @*     { *@
-                    @*         @if (item.Id == Model.Product.BrandId) *@
-                    @*         { *@
-                    @*             <option value="@item.Id" selected>@item.Name</option> *@
-                    @*         } *@
-                    @*         else *@
-                    @*         { *@
-                    @*             <option value="@item.Id">@item.Name</option> *@
-                    @*         } *@
-                    @*     } *@
-                    @* </select> *@
-                    <select class="form-select" asp-for="News.TeamId" asp-items="Model.Matches"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="MatchId" class="form-label">Match</label>
+                    <select class="form-select" asp-for="News.MatchId" asp-items="Model.Matches"></select>
                     <span class="text-danger" asp-validation-for="News.MatchId"></span>
                 </div>
-           
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>

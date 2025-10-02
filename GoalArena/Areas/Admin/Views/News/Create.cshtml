@@ -13,44 +13,50 @@
             <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="name" name="News.Title" value="@Model.News!.Title">
+                    <input type="text" class="form-control" id="name" asp-for="News.Title" />
                     <span class="text-danger" asp-validation-for="News.Title"></span>
                 </div>
+
                 <div class="mb-3">
                     <label for="Content" class="form-label">Content</label>
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="Leave a Content here" id="Content" style="height: 100px" name="Product.Content">@Model.News!.Content</textarea>
-                        <label for="Content">You Content Here...</label>
+                        <textarea class="form-control" placeholder="Leave a Content here" asp-for="News.Content" style="height: 100px"></textarea>
+                        <label for="Content">Your Content Here...</label>
                     </div>
                     <span class="text-danger" asp-validation-for="News.Content"></span>
                 </div>
+
                 <div class="mb-3">
                     <label for="ImageNews" class="form-label">ImageNews</label>
                     <input type="file" class="form-control" id="imageUrl" name="imageUrl" accept="image/*" onchange="previewImage(event)">
                     <img id="imagePreview" src="#" alt="Image Preview" class="img-thumbnail mt-2" style="display: none; max-height: 200px;" />
                     <span class="text-danger" asp-validation-for="News.ImageNews"></span>
                 </div>
+
                 <div class="mb-3">
                     <label asp-for="News.PublishedDate" class="form-label"></label>
                     <input asp-for="News.PublishedDate" class="form-control" type="datetime-local" />
                     <span class="text-danger" asp-validation-for="News.PublishedDate"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label for="playerId" class="form-label">playerId</label>
+                    <label for="playerId" class="form-label">Player</label>
                     <select class="form-select" asp-for="News.playerId" asp-items="Model.Players"></select>
                     <span class="text-danger" asp-validation-for="News.playerId"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label for="TeamId" class="form-label">TeamId</label>
-                    <select class="form-select" asp-for="News.playerId" asp-items="Model.Teams"></select>
+                    <label for="TeamId" class="form-label">Team</label>
+                    <select class="form-select" asp-for="News.TeamId" asp-items="Model.Teams"></select>
                     <span class="text-danger" asp-validation-for="News.TeamId"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label for="MatchId" class="form-label">MatchId</label>
-                    <select class="form-select" asp-for="News.TeamId" asp-items="Model.Matches"></select>
+                    <label for="MatchId" class="form-label">Match</label>
+                    <select class="form-select" asp-for="News.MatchId" asp-items="Model.Matches"></select>
                     <span class="text-danger" asp-validation-for="News.MatchId"></span>
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
