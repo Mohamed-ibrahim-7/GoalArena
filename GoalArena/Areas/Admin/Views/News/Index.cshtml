@@ -24,6 +24,9 @@
                 <th>Content</th>
                 <th>PublishedDate</th>
                 <th>ImageNews</th>
+                <th>playerId </th>
+                <th>TeamId</th>
+                <th>MatchId</th>
                 
             </tr>
         </thead>
@@ -44,6 +47,9 @@
                             <span>No Image</span>
                         }
                     </td>
+                    <td>@obj.playerId</td>
+                    <td>@obj.TeamId</td>
+                    <td>@obj.MatchId</td>
 
                     
                         @if (User.IsInRole(SD.SuperAdmin) || User.IsInRole(SD.Admin))

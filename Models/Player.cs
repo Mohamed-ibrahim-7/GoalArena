@@ -5,10 +5,10 @@
 
             public class Player
         {
-            public int PlayerId { get; set; }                 // seed data   عدل علي الكنترول وضيف الداتا الا هضيفها في 
+            public int PlayerId { get; set; }               
 
-        // معلومات أساسية
-        public string Name { get; set; } = string.Empty;        // اسم اللاعب
+        
+        public string Name { get; set; } = string.Empty;        
             public string FullName { get; set; } = string.Empty;    // الاسم الكامل
             public string Position { get; set; } = string.Empty;    // المركز الأساسي (مثلاً: مهاجم)
             public string? SecondaryPosition { get; set; }          // مركز ثانوي (مثلاً: جناح أيمن)
