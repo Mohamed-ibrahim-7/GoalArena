@@ -1,14 +1,68 @@
-﻿@model GoalArena.Models.Ticket
+﻿@model GoalArena.Models.Match
+@{
+    ViewData["Title"] = "حجز تذكرة";
+}
 
-<h2>احجز تذكرتك</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-ticket-alt"></i> حجز تذكرة
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center mb-4">مباراة: @Model.HomeTeam vs @Model.AwayTeam</h4>
+                    <p class="text-center text-muted">
+                        <i class="fas fa-calendar-alt"></i> @Model.MatchDate.ToString("dddd, dd MMM yyyy - HH:mm") <br />
+                        <i class="fas fa-map-marker-alt"></i> @Model.Stadium
+                    </p>
 
-<form asp-action="BookTicket" method="post">
-    <input type="hidden" asp-for="MatchId" />
+                    <form asp-controller="Ticket" asp-action="BookTicket" method="post">
+                        <input type="hidden" name="MatchId" value="@Model.MatchId" />
 
-    <div class="form-group">
-        <label>عدد التذاكر</label>
-        <input asp-for="Quantity" class="form-control" type="number" min="1" value="1" />
+                        <div class="mb-3">
+                            <label class="form-label">الاسم الكامل</label>
+                            <input type="text" name="FullName" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">البريد الإلكتروني</label>
+                            <input type="email" name="Email" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">عدد التذاكر</label>
+                            <input type="number" name="Quantity" class="form-control" min="1" max="10" value="1" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">السعر للتذكرة</label>
+                            <input type="text" class="form-control" value="100 EGP" readonly />
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-credit-card"></i> الدفع الآن
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i> رجوع
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">انتقل للدفع</button>
-</form>
+<style>
+    .card {
+        border-radius: 12px;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+</style>

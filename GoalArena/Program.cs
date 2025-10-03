@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
-using System.Configuration;
 
 namespace GoalArena
 {
@@ -20,18 +19,20 @@ namespace GoalArena
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // 2. Add Identity
+            // Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
                 options.SignIn.RequireConfirmedEmail = true;
-            }) .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-            //login by google
-
+            // Login by Google
             builder.Services.AddAuthentication()
             .AddGoogle("google", opt =>
             {
@@ -40,8 +41,8 @@ namespace GoalArena
                 opt.ClientSecret = googleAuth["ClientSecret"] ?? " ";
                 opt.SignInScheme = IdentityConstants.ExternalScheme;
             });
-            // login by facebook
 
+            // Login by Facebook
             builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"] ?? " ";
@@ -56,47 +57,48 @@ namespace GoalArena
 
             builder.Services.AddAuthorization();
 
-
+            // Repositories + Helpers
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-            builder.Services.AddScoped<ImatchRepository, MatchRepository>();   
+            builder.Services.AddScoped<ImatchRepository, MatchRepository>();
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
             builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
             builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
             builder.Services.AddScoped<ITeamRepository, TeamRepository>();
             builder.Services.AddScoped<IDBInitializer, DBInitializer>();
-            builder.Services.AddScoped<IMatchEventRepository, MatcheventRepository >();
+            builder.Services.AddScoped<IMatchEventRepository, MatcheventRepository>();
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
-            builder.Services.AddScoped<ITournamentRepository, TournamentRepository >();
+            builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
             builder.Services.AddScoped<InewsRepository, NewsRepository>();
+
+            // Stripe
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
-           
-
-            // Configure the HTTP request pipelinez      ccccccccv bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+            // Pipeline
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-
             app.UseHttpsRedirection();
+            app.UseStaticFiles();   // ? ???
 
             app.UseRouting();
-            app.UseAuthentication();
+
+            app.UseAuthentication(); // ? ??? Authorization
             app.UseAuthorization();
 
-            app.MapStaticAssets();
+            // Routes
             app.MapControllerRoute(
-                 name: "default",
-                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
-                 .WithStaticAssets();
+                name: "areas",
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
-
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             using (var scope = app.Services.CreateScope())
             {
@@ -105,7 +107,6 @@ namespace GoalArena
             }
 
             app.Run();
-
         }
     }
 }

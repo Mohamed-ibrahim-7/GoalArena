@@ -110,14 +110,13 @@
 
                                             <!-- Action Buttons -->
                                             <div class="d-flex gap-2">
-                                                <a href="@Url.Action("BookTicket", new { matchId = match.MatchId })"
+                                                <a asp-controller="Ticket" asp-action="BookTicket" asp-route-matchId="@match.MatchId"
                                                    class="btn btn-primary btn-sm flex-fill">
                                                     <i class="fas fa-ticket-alt"></i> حجز تذكرة
                                                 </a>
                                                 <button class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip"
                                                         title="مشاهدة تفاصيل المباراة">
                                                     <i class="fas fa-info-circle"></i>
-
                                                 </button>
                                             </div>
                                         </div>
@@ -156,7 +155,7 @@
                                 <h6 class="fw-bold">@article.Title</h6>
                                 <p class="small text-muted mb-2">@article.Content?.Substring(0, Math.Min(article.Content.Length, 100))...</p>
                                 <small class="text-muted">
-                                    <i class="fas fa-clock"></i> @article.Id <!-- يمكن استبدال هذا بتاريخ النشر -->
+                                    <i class="fas fa-clock"></i> @article.Id
                                 </small>
                             </div>
                         }
@@ -181,7 +180,6 @@
                         int rank = 1;
                         foreach (var scorer in scorers)
                         {
-                           
                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
                                 <div>
                                     <span class="fw-bold">@rank. @scorer.Name</span>
@@ -240,9 +238,9 @@
         transition: transform 0.2s ease-in-out;
     }
 
-    .card:hover {
-        transform: translateY(-2px);
-    }
+        .card:hover {
+            transform: translateY(-2px);
+        }
 
     .border-start {
         border-width: 4px !important;
@@ -251,14 +249,12 @@
 
 <!-- Scripts -->
 <script>
-    // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Auto refresh every 5 minutes
-    setTimeout(function() {
+    setTimeout(function () {
         location.reload();
     }, 300000);
 </script>

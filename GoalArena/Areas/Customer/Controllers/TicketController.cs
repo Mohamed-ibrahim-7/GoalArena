@@ -1,41 +1,63 @@
 ﻿using GoalArena.Data;
 using GoalArena.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoalArena.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize] 
     public class TicketController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TicketController(ApplicationDbContext context)
+        public TicketController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // صفحة الحجز
+      
         [HttpGet]
-        public IActionResult BookTicket(int matchId)
+        public async Task<IActionResult> BookTicket(int matchId)
         {
-            var ticket = new Ticket { MatchId = matchId, Quantity = 1 };
-            return View(ticket);
+            var match = _context.Matches
+        .Include(m => m.HomeTeam)
+        .Include(m => m.AwayTeam)
+        .FirstOrDefault(m => m.MatchId == matchId);
+            if (match == null) return NotFound();
+            return View(match);
+
+           
         }
 
-        // تنفيذ الحجز وتحويل للدفع
+        // ✅ تأكيد الحجز
         [HttpPost]
-        public IActionResult BookTicket(Ticket ticket)
+        public async Task<IActionResult> BookTicketConfirmed(int matchId, int quantity)
         {
-            if (ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var match = await _context.Matches.FindAsync(matchId);
+            if (match == null) return NotFound();
+
+            var ticket = new Ticket
             {
-                _context.Tickets.Add(ticket);
-                _context.SaveChanges();
+                MatchId = matchId,
+                UserId = user.Id,
+                Quantity = quantity,
+                Price = match.TicketPrice * quantity,
+               PurchaseDate = DateTime.UtcNow
+            };
 
-                // بعد الحجز روح لصفحة الدفع
-                return RedirectToAction("Checkout", "Payment", new { area = "Customer", ticketId = ticket.TicketId });
-            }
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
 
-            return View(ticket);
+            // بعد الحجز يروح للدفع
+            return RedirectToAction("Checkout", "Payment", new { area = "Customer", ticketId = ticket.TicketId });
         }
     }
 }
