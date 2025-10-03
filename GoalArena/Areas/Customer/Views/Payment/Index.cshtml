@@ -1,0 +1,25 @@
+﻿@model Ticket
+
+<h2>💳 الدفع للتذكرة</h2>
+
+<p>
+    المباراة: <b>@Model.Match.HomeTeam ضد @Model.Match.AwayTeam</b><br />
+    الملعب: @Model.Match.Stadium <br />
+    التاريخ: @Model.Match.MatchDate <br />
+    السعر: <b>@Model.Price</b>
+</p>
+
+<form asp-action="Pay" method="post">
+    <input type="hidden" name="ticketId" value="@Model.TicketId" />
+    <div class="form-group">
+        <label>اختر وسيلة الدفع:</label>
+        <select name="method" class="form-control">
+            <option value="Cash">كاش</option>
+            <option value="CreditCard">بطاقة ائتمان</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Stripe">Stripe</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success mt-3">ادفع الآن</button>
+</form>
+    

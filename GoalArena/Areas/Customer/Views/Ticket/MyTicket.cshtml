@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Ticket>
+
+<h2>🎟️ تذاكري</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>المباراة</th>
+            <th>التاريخ</th>
+            <th>الملعب</th>
+            <th>المقعد</th>
+            <th>السعر</th>
+            <th>الحالة</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.Match.HomeTeam ضد @ticket.Match.AwayTeam</td>
+                <td>@ticket.Match.MatchDate</td>
+                <td>@ticket.Match.Stadium</td>
+                <td>@ticket.SeatNumber</td>
+                <td>@ticket.Price</td>
+                <td>@(ticket.Payment != null ? "مدفوع" : "في انتظار الدفع")</td>
+            </tr>
+        }
+    </tbody>
+</table>

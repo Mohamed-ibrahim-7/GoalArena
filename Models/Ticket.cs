@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace GoalArena.Models
 {
@@ -15,6 +16,11 @@ namespace GoalArena.Models
         [Range(0, 1_000_000)]
         public decimal Price { get; set; }
         public DateTime PurchaseDate { get; set; }
+        public int? PaymentId { get; set; }
+        public Payment Payment { get; set; }
+        public string PaymentStatus { get; set; }
+
+        public int Quantity { get; set; }
 
     } 
     public enum TicketStatus

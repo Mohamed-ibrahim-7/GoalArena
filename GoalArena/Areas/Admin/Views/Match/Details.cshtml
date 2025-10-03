@@ -7,7 +7,7 @@
 <h2>Match Details</h2>
 
 <!-- Existing sections for match details -->
-<!-- Add this section for match events -->
+<!-- Match Events Section -->
 <div class="row">
     <div class="col-md-12">
         <div class="card mb-4">
@@ -73,6 +73,33 @@
                         No events recorded for this match yet.
                     </div>
                 }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ticket Booking Section -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card border-success shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">🎟 Book Tickets</h5>
+            </div>
+            <div class="card-body">
+                <form asp-controller="Ticket" asp-action="Book" method="post">
+                    <input type="hidden" name="MatchId" value="@Model.MatchId" />
+                    <div class="mb-3">
+                        <label class="form-label">Ticket Price</label>
+                        <input type="text" class="form-control" value="@Model.TicketPrice.ToString("C")" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Number of Tickets</label>
+                        <input type="number" id="quantity" name="Quantity" class="form-control" value="1" min="1" max="10" />
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-ticket-alt"></i> Book Now
+                    </button>
+                </form>
             </div>
         </div>
     </div>

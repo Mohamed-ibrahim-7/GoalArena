@@ -40,6 +40,7 @@ namespace GoalArena.Models
 
         public ICollection<MatchEvent>? MatchEvents { get; set; }  // الأهداف، الكروت، التبديلات
         public ICollection<News>? News { get; set; }
+        public decimal TicketPrice { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
     }
 

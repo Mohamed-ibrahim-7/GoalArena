@@ -3,6 +3,7 @@ using GoalArena.Models;
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace GoalArena.Data
 {
@@ -28,6 +29,8 @@ namespace GoalArena.Data
         public DbSet<News> News { get; set; }
         public DbSet<TeamSeason> TeamSeasons { get; set; }
         public DbSet<UserOTP> UserOTPs { get; set; }
+        public DbSet<Payment> payments { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
