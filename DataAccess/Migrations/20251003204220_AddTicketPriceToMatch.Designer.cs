@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251002150119_News")]
-    partial class News
+    [Migration("20251003204220_AddTicketPriceToMatch")]
+    partial class AddTicketPriceToMatch
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,9 @@ namespace DataAccess.Migrations
                     b.Property<int?>("TeamId1")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("TicketPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
@@ -192,6 +195,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد الأهلي WE",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -209,6 +213,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد القاهرة الدولي",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -226,6 +231,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد 30 يونيو",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -243,6 +249,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد WE الأهلي",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -260,6 +267,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد الأكاديمية العسكرية",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -277,6 +285,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد بورسعيد",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -294,6 +303,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد الأهلي WE",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -311,6 +321,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد 30 يونيو",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -328,6 +339,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد بورسعيد",
                             Status = 5,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -342,6 +354,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد القاهرة الدولي",
                             Status = 0,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -356,6 +369,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد WE الأهلي",
                             Status = 0,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         },
                         new
@@ -370,6 +384,7 @@ namespace DataAccess.Migrations
                             SeasonId = 1,
                             Stadium = "استاد الأكاديمية العسكرية",
                             Status = 0,
+                            TicketPrice = 0m,
                             TournamentId = 1
                         });
                 });
@@ -12434,11 +12449,21 @@ namespace DataAccess.Migrations
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("SeatNumber")
                         .IsRequired()
@@ -12455,6 +12480,8 @@ namespace DataAccess.Migrations
                     b.HasKey("TicketId");
 
                     b.HasIndex("MatchId");
+
+                    b.HasIndex("PaymentId");
 
                     b.ToTable("Tickets");
                 });
@@ -12665,6 +12692,38 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("payments");
+                });
+
             modelBuilder.Entity("GoalArena.Models.Match", b =>
                 {
                     b.HasOne("GoalArena.Models.Team", "AwayTeam")
@@ -12830,7 +12889,13 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Models.Payment", "Payment")
+                        .WithMany("Tickets")
+                        .HasForeignKey("PaymentId");
+
                     b.Navigation("Match");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("GoalArena.Models.UserOTP", b =>
@@ -12895,6 +12960,17 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Models.Payment", b =>
+                {
+                    b.HasOne("GoalArena.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GoalArena.Models.Match", b =>
                 {
                     b.Navigation("MatchEvents");
@@ -12929,6 +13005,11 @@ namespace DataAccess.Migrations
                     b.Navigation("Matches");
 
                     b.Navigation("Seasons");
+                });
+
+            modelBuilder.Entity("Models.Payment", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

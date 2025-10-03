@@ -1,9 +1,7 @@
 ﻿using GoalArena.Data;
 using GoalArena.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Models;
+using Stripe.Checkout;
 
 namespace GoalArena.Areas.Customer.Controllers
 {
@@ -11,53 +9,61 @@ namespace GoalArena.Areas.Customer.Controllers
     public class PaymentController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PaymentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public PaymentController(ApplicationDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
-        // صفحة الدفع
-        public IActionResult Pay(int ticketId)
+        public IActionResult Checkout(int ticketId)
         {
             var ticket = _context.Tickets
-                .Include(t => t.Match)
-                .ThenInclude(m => m.Stadium)
-                .FirstOrDefault(t => t.TicketId == ticketId);
+                .Where(t => t.TicketId == ticketId)
+                .FirstOrDefault();
 
             if (ticket == null) return NotFound();
 
-            return View(ticket);
-        }
+            var domain = "https://localhost:7291/";
 
-        // تنفيذ الدفع
-        [HttpPost]
-        public async Task<IActionResult> Pay(int ticketId, PaymentMethod method)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var ticket = _context.Tickets.Include(t => t.Match).FirstOrDefault(t => t.TicketId == ticketId);
-
-            if (ticket == null) return NotFound();
-
-            var payment = new Payment
+            var options = new SessionCreateOptions
             {
-                UserId = user.Id,
-                Amount = ticket.Price,
-                PaymentDate = DateTime.Now,
-                Method = method,
-                TransactionId = Guid.NewGuid().ToString() // مؤقتاً نولد رقم عشوائي
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(ticket.Price * 100), // السعر بالسنت
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = "Match Ticket"
+                            }
+                        },
+                        Quantity = ticket.Quantity
+                    }
+                },
+                Mode = "payment",
+                SuccessUrl = domain + "Customer/Payment/Success",
+                CancelUrl = domain + "Customer/Payment/Cancel"
             };
 
-            _context.payments.Add(payment);
-            await _context.SaveChangesAsync();
+            var service = new SessionService();
+            Session session = service.Create(options);
+            Response.Headers.Add("Location", session.Url);
 
-            // ربط التذكرة بالدفع
-            ticket.PaymentId = payment.Id;
-            await _context.SaveChangesAsync();
+            return new StatusCodeResult(303);
+        }
 
-            return RedirectToAction("MyTickets", "Ticket");
+        public IActionResult Success()
+        {
+            return View();
+        }
+
+        public IActionResult Cancel()
+        {
+            return View();
         }
     }
 }

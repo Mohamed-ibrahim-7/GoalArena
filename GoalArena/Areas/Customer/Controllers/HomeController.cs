@@ -26,48 +26,46 @@ namespace GoalArena.Controllers
                 _ => today // default to today
             };
 
+
+
             var matches = _context.Matches
-                .Include(m => m.HomeTeam)
-                .Include(m => m.AwayTeam)
-                .Where(m => m.MatchDate >= DateTime.Now) // مباريات لسه جاية
-                .ToList();
+     .Include(m => m.HomeTeam)
+     .Include(m => m.AwayTeam)
+     .Where(m => m.MatchDate >= DateTime.Now)  
+     .OrderBy(m => m.MatchDate)                 
+     .ToList();
+
+
 
             var news = _context.News
                                .OrderByDescending(n => n.Id)
-                               .Take(5) // أخذ آخر 5 أخبار
+                               .Take(5) 
                                .ToList();
-
-            var topScorers = _context.Players
-                .Where(p => p.Goals > 0)
-                .Include(p => p.Team)
-                .OrderByDescending(p => p.Goals)
-                .Take(5)
-                .ToList();
 
             ViewBag.Matches = matches;
             ViewBag.News = news;
             ViewBag.CurrentFilter = dateFilter;
             ViewBag.FilterDate = filterDate;
+            var topScorers = _context.Players
+                  .Where(p => p.Goals > 0)
+                  .Include(p => p.Team)
+                  .OrderByDescending(p => p.Goals)   
+                   .Take(5)                           
+                   .ToList();
             ViewBag.TopScorers = topScorers;
-
             return View();
         }
 
-        [HttpPost]
-        public IActionResult PredictBestPlayer(int matchId, string playerName)
-        {
-            TempData["Message"] = $"تم تسجيل توقعك: {playerName} للمباراة {matchId}";
-            return RedirectToAction("Index");
-        }
-
-        // ✅ صفحة حجز التذكرة
-        //public IActionResult BookTicket(int matchId)
+        //[HttpPost]
+        //public IActionResult PredictBestPlayer(string matchId, string playerName)
         //{
-        //    var match = _context.Matches
-        //        .Include(m => m.HomeTeam)
-        //        .Include(m => m.AwayTeam)
-        //        .FirstOrDefault(m => m.MatchId == matchId);
+        //    TempData["Message"] = $"تم تسجيل توقعك: {playerName} للمباراة {matchId}";
+        //    return RedirectToAction("Index");
+        //}
 
+        //public IActionResult BookTicket(string matchId)
+        //{
+        //    var match = _context.Matches.FirstOrDefault(m => m.MatchId.ToString() == matchId);
         //    if (match == null)
         //    {
         //        return NotFound();
@@ -76,20 +74,10 @@ namespace GoalArena.Controllers
         //    return View(match);
         //}
 
-        //// ✅ تأكيد الحجز
         //[HttpPost]
-        //public IActionResult BookTicketConfirmed(int matchId, int quantity)
+        //public IActionResult BookTicketConfirmed(string matchId)
         //{
-        //    var match = _context.Matches.FirstOrDefault(m => m.MatchId == matchId);
-        //    if (match == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    // هنا تقدر تعمل Save في جدول Tickets لو عندك Model اسمه Ticket
-        //    // دلوقتي هنكتفي برسالة نجاح
-        //    TempData["Message"] = $"تم حجز {quantity} تذكرة للمباراة {match.HomeTeam.Name} ضد {match.AwayTeam.Name}";
-
+        //    TempData["Message"] = $"تم حجز تذكرة للمباراة {matchId}";
         //    return RedirectToAction("Index");
         //}
 

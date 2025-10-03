@@ -1,0 +1,14 @@
+﻿@model GoalArena.Models.Ticket
+
+<h2>احجز تذكرتك</h2>
+
+<form asp-action="BookTicket" method="post">
+    <input type="hidden" asp-for="MatchId" />
+
+    <div class="form-group">
+        <label>عدد التذاكر</label>
+        <input asp-for="Quantity" class="form-control" type="number" min="1" value="1" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">انتقل للدفع</button>
+</form>
