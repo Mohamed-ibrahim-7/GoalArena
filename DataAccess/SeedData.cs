@@ -880,6 +880,9 @@ new Team { Id = 21, Name = "Kahrabaa Ismailia", Coach = "TBD", LogoUrl = "/image
   );
 
             // Matches
+            DateTime today = DateTime.Now.Date;
+            DateTime yesterday = today.AddDays(-1);
+            DateTime tomorrow = today.AddDays(1);
             modelBuilder.Entity<Match>().HasData(
                 // Round 1
                 new Match
@@ -1082,8 +1085,94 @@ new Team { Id = 21, Name = "Kahrabaa Ismailia", Coach = "TBD", LogoUrl = "/image
                     Status = MatchStatus.Scheduled,
                     SeasonId = 1,
                     TournamentId = 1
+                } ,
+                new Match
+                {
+                    MatchId = 400,
+                    TournamentId = 1,
+                    HomeTeamId = 1,
+                    AwayTeamId = 2,
+                    Stadium = "استاد القاهرة الدولي",
+                    MatchDate = yesterday.AddHours(20),
+                    TicketPrice = 100,
+                    Status = MatchStatus.Completed,
+                    SeasonId = 1,
+                    Result = MatchResult.HomeWin,
+                    HomeScore=2,
+                    AwayScore=1
+
+
+                },
+                // مباراة اليوم
+                new Match
+                {
+                    MatchId = 402,
+                    TournamentId = 1,
+                    HomeTeamId = 3,
+                    AwayTeamId = 4,
+                    Stadium = "استاد برج العرب",
+                    MatchDate = today.AddHours(19),
+                    TicketPrice = 120,
+                    Status = MatchStatus.Scheduled,
+                    SeasonId = 1,
+                    
+                    Result = null
+                },
+                // مباراة الغد
+                new Match
+                {
+                    MatchId =401,
+                    TournamentId = 1,
+                    HomeTeamId = 5,
+                    AwayTeamId = 6,
+                    Stadium = "استاد الإسماعيلية",
+                    MatchDate = tomorrow.AddHours(21),
+                    TicketPrice = 80,
+                    Status = MatchStatus.InProgress,
+                    SeasonId = 1,
+                    
+                    Result = null
                 }
+           
+
+
+
+
+
+
             );
+  //          modelBuilder.Entity<News>().HasData(
+  //    new News
+  //    {
+  //        Id = 201,
+  //        Title = "الأهلي يفوز على الزمالك في قمة مثيرة",
+  //        Content = "حقق الأهلي فوزًا مثيرًا على الزمالك بنتيجة 2-1 في مباراة قوية ضمن الجولة الماضية من الدوري المصري.",
+  //        PublishedDate = yesterday,
+  //        TeamId = 1,
+  //        playerId = 0,
+  //        MatchId = 101
+  //    },
+  //    new News
+  //    {
+  //        Id = 202,
+  //        Title = "بيراميدز يستعد لمواجهة المصري الليلة",
+  //        Content = "يستعد فريق بيراميدز لمواجهة المصري في مباراة متكافئة ضمن منافسات الدوري المصري الممتاز.",
+  //        PublishedDate = today,
+  //        TeamId = 3,
+  //        playerId = 0,
+  //        MatchId = 102
+  //    },
+  //    new News
+  //    {
+  //        Id = 203,
+  //        Title = "الإسماعيلي والاتحاد يتواجهان غدًا في لقاء ناري",
+  //        Content = "يستضيف الإسماعيلي نظيره الاتحاد السكندري غدًا في مباراة ينتظرها عشاق كرة القدم المصرية.",
+  //        PublishedDate = tomorrow,
+  //        TeamId = 5,
+  //        playerId = 0,
+  //        MatchId = 103
+  //    }
+  //);
 
             // Match Events
             modelBuilder.Entity<MatchEvent>().HasData(
