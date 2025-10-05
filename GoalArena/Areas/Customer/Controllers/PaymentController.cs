@@ -34,7 +34,7 @@ namespace GoalArena.Areas.Customer.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)(ticket.Price * 100), // السعر بالسنت
+                            UnitAmount = (long)(ticket.Price * 100), 
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {

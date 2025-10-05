@@ -14,21 +14,30 @@ namespace GoalArena.Areas.Customer.Controllers
             _context = context;
         }
 
-        // ✅ عرض المباريات القادمة
+      
         public IActionResult Index()
         {
+          var TopScorers = _context.Players
+                .OrderByDescending(p => p.Goals)
+                .Take(5)
+                .ToList();
             var matches = _context.Matches
                 .Include(m => m.HomeTeam)
                 .Include(m => m.AwayTeam)
-                .Where(m => m.MatchDate >= DateTime.Now)
+                .Where(m => m.MatchDate.Date >=DateTime.Today)
                 .OrderBy(m => m.MatchDate)
                 .ToList();
 
+            var News = _context.News.
+                OrderByDescending(n => n.Id).
+                Take(5).ToList();
+            ViewBag.News = News;   
+            ViewBag.TopScorers = TopScorers;
             ViewBag.Matches = matches;
             return View();
         }
 
-        // ✅ تفاصيل مباراة
+
         public IActionResult Details(int id)
         {
             var match = _context.Matches

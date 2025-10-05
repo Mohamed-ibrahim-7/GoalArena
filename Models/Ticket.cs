@@ -11,7 +11,7 @@ namespace GoalArena.Models
         public Match Match { get; set; }      = null!;
 
         public string UserId { get; set; }    = null!;
-        public string SeatNumber { get; set; }     = null!;
+        public string? SeatNumber { get; set; }     = null!;
         public string TicketStatus { get; set; } = null!;
         [Range(0, 1_000_000)]
         public decimal Price { get; set; }

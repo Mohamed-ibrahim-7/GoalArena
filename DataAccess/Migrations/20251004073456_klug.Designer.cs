@@ -4,6 +4,7 @@ using GoalArena.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251004073456_klug")]
+    partial class klug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,6 +385,45 @@ namespace DataAccess.Migrations
                             Stadium = "استاد الأكاديمية العسكرية",
                             Status = 0,
                             TicketPrice = 0m,
+                            TournamentId = 1
+                        },
+                        new
+                        {
+                            MatchId = 400,
+                            AwayScore = 1,
+                            AwayTeamId = 2,
+                            HomeScore = 2,
+                            HomeTeamId = 1,
+                            MatchDate = new DateTime(2025, 10, 3, 20, 0, 0, 0, DateTimeKind.Local),
+                            Result = 0,
+                            SeasonId = 1,
+                            Stadium = "استاد القاهرة الدولي",
+                            Status = 5,
+                            TicketPrice = 100m,
+                            TournamentId = 1
+                        },
+                        new
+                        {
+                            MatchId = 402,
+                            AwayTeamId = 4,
+                            HomeTeamId = 3,
+                            MatchDate = new DateTime(2025, 10, 4, 19, 0, 0, 0, DateTimeKind.Local),
+                            SeasonId = 1,
+                            Stadium = "استاد برج العرب",
+                            Status = 0,
+                            TicketPrice = 120m,
+                            TournamentId = 1
+                        },
+                        new
+                        {
+                            MatchId = 401,
+                            AwayTeamId = 6,
+                            HomeTeamId = 5,
+                            MatchDate = new DateTime(2025, 10, 5, 21, 0, 0, 0, DateTimeKind.Local),
+                            SeasonId = 1,
+                            Stadium = "استاد الإسماعيلية",
+                            Status = 1,
+                            TicketPrice = 80m,
                             TournamentId = 1
                         });
                 });
@@ -12463,6 +12505,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SeatNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketStatus")

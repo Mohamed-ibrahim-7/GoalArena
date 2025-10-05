@@ -71,8 +71,11 @@ namespace GoalArena
             builder.Services.AddScoped<InewsRepository, NewsRepository>();
 
             // Stripe
+            // Stripe
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+            var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
+            StripeConfiguration.ApiKey = stripeSettings.SecretKey;
 
             var app = builder.Build();
 

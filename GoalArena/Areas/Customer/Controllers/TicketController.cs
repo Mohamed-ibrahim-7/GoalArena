@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GoalArena.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    [Authorize] 
+    [Authorize]
     public class TicketController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,18 +20,16 @@ namespace GoalArena.Areas.Customer.Controllers
             _userManager = userManager;
         }
 
-      
+        // ✅ عرض صفحة الحجز
         [HttpGet]
         public async Task<IActionResult> BookTicket(int matchId)
         {
-            var match = _context.Matches
-        .Include(m => m.HomeTeam)
-        .Include(m => m.AwayTeam)
-        .FirstOrDefault(m => m.MatchId == matchId);
-            if (match == null) return NotFound();
-            return View(match);
+            var match = await _context.Matches
+                .FirstOrDefaultAsync(m => m.MatchId == matchId);
 
-           
+            if (match == null) return NotFound();
+
+            return View(match);
         }
 
         // ✅ تأكيد الحجز
@@ -50,13 +48,17 @@ namespace GoalArena.Areas.Customer.Controllers
                 UserId = user.Id,
                 Quantity = quantity,
                 Price = match.TicketPrice * quantity,
-               PurchaseDate = DateTime.UtcNow
+                PurchaseDate = DateTime.UtcNow,
+                PaymentStatus = "Pending"
+                ,
+                TicketStatus = "Pending"
+
             };
 
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
 
-            // بعد الحجز يروح للدفع
+            // بعد الحجز يروح لصفحة الدفع
             return RedirectToAction("Checkout", "Payment", new { area = "Customer", ticketId = ticket.TicketId });
         }
     }

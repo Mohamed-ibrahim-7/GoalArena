@@ -31,7 +31,7 @@ namespace GoalArena.Areas.Admin.Controllers
             _seasonRepository = seasonRepository;
             _tournamentRepository = tournamentRepository;
             _matchEventRepository = matchEventRepository;
-            _ticketRepository = ticketRepository; // ✅ تمت الإضافة
+            _ticketRepository = ticketRepository;
         }
 
         [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Company}")]
